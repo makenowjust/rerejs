@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "commonjs",
+    "noEmit": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "types/**/*.ts",
+    "src/**/*.ts",
+    "tools/**/*.ts",
+    "test/**/*.ts"
+  ]
+}
