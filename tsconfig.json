@@ -4,6 +4,7 @@
     "module": "commonjs",
     "noEmit": true,
     "strict": true,
+    "isolatedModules": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
