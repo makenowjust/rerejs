@@ -68,9 +68,20 @@
       "import/order": [
         "error",
         {
-          "groups": ["builtin", "external", ["index", "sibling", "parent"]],
+          "groups": [
+            "builtin",
+            "external",
+            [
+              "index",
+              "sibling",
+              "parent"
+            ]
+          ],
           "newlines-between": "always",
-          "alphabetize": {"order": "asc", "caseInsensitive": true}
+          "alphabetize": {
+            "order": "asc",
+            "caseInsensitive": true
+          }
         }
       ]
     }
