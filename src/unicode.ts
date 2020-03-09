@@ -1,3 +1,7 @@
+// # unicode.ts
+//
+// > Provides Unicode property operations.
+
 import propertyAliases from 'unicode-property-aliases-ecmascript';
 import propertyValueAliases from 'unicode-property-value-aliases-ecmascript';
 

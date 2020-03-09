@@ -1,3 +1,7 @@
+// # program.ts
+//
+// > Provides a `Program` type which is executor of op-codes.
+
 import assert from 'assert';
 
 import * as char from './char';

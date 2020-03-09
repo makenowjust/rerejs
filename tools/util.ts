@@ -1,3 +1,7 @@
+// # util.ts
+//
+// > Utilities for tools.
+
 import * as path from 'path';
 
 import { CharSet } from '../src/char-set';
