@@ -1,9 +1,11 @@
 {
+  "private": true,
+  "name": "rere",
   "scripts": {
-    "build": "ts-node -T ./tools/make.ts",
     "lint": "eslint './**/*.ts'",
-    "type": "tsc -p .",
-    "test": "nyc ava"
+    "make": "ts-node -T ./tools/make.ts",
+    "test": "nyc ava",
+    "type-check": "tsc -p ."
   },
   "dependencies": {
     "unicode-property-aliases-ecmascript": "^1.0.5",
