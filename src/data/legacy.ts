@@ -25,4 +25,3 @@ export const inverseFoldMap: Map<number, number[]> = new Map([
   [0xA64A, [0x1C88, 0xA64B]],
   [0x1E60, [0x1E61, 0x1E9B]],
 ]);
-

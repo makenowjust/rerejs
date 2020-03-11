@@ -1817,4 +1817,3 @@ script.set("Yi", [40960,42125,42128,42183]);
 scriptExtensions.set("Yi", [12289,12291,12296,12306,12308,12316,12539,12540,65377,65382]);
 script.set("Zanabazar_Square", [72192,72264]);
 scriptExtensions.set("Zanabazar_Square", []);
-

@@ -109,7 +109,6 @@ export const makeUnicode = async (): Promise<void> => {
   for (const name of SCRIPT) {
     src += makeScriptData(name);
   }
-  src += '\n';
 
   await fs.writeFile(path.join(DATA_DIR, 'unicode.ts'), src);
   console.log('==> src/data/unicode.ts');
