@@ -1,19 +1,11 @@
-// # make-unicode-script.js
-//
-// > A generator for `src/data/unicode-script.js` data.
-
 /* eslint-disable @typescript-eslint/no-var-requires */
-
-import { promises as fs } from 'fs';
-import * as path from 'path';
 
 import matchPropertyValue from 'unicode-match-property-value-ecmascript';
 
 import { CharSet } from '../src/char-set';
-import { toArray, DATA_DIR } from './util';
 
 // Link https://www.ecma-international.org/ecma-262/10.0/index.html#table-unicode-script-values.
-const scripts = [
+export const SCRIPT = [
   'Adlm',
   'Ahom',
   'Hluw',
@@ -166,7 +158,8 @@ const scripts = [
   // However V8 accepts this... (e.g. `/\p{Script=Zzzz}/u.exec('\uFFFF')` matches.)
 ];
 
-const makeData = (canonical: string): string => {
+export const makeScriptData = (name: string): string => {
+  const canonical = matchPropertyValue('Script', name);
   const base: number[] = require(`unicode-12.0.0/Script/${canonical}/code-points.js`);
   const ext: number[] = require(`unicode-12.0.0/Script_Extensions/${canonical}/code-points.js`);
 
@@ -183,25 +176,8 @@ const makeData = (canonical: string): string => {
   }
 
   let src = '';
-  src += `script.set(${JSON.stringify(canonical)}, ${JSON.stringify(toArray(baseSet))});\n`;
-  src += `scriptExtensions.set(${JSON.stringify(canonical)}, ${JSON.stringify(
-    toArray(extSet)
-  )});\n`;
+  src += `script.set(${JSON.stringify(canonical)}, ${JSON.stringify(baseSet.data)});\n`;
+  src += `scriptExtensions.set(${JSON.stringify(canonical)}, ${JSON.stringify(extSet.data)});\n`;
 
   return src;
-};
-
-export const makeUnicodeScript = async (): Promise<void> => {
-  let src = '';
-
-  src += `export const script: Map<string, number[][]> = new Map();\n`;
-  src += `export const scriptExtensions: Map<string, number[][]> = new Map();\n\n`;
-
-  for (const name of scripts) {
-    const canonical = matchPropertyValue('Script', name);
-    src += makeData(canonical);
-  }
-
-  await fs.writeFile(path.join(DATA_DIR, 'unicode-script.ts'), src);
-  console.log('==> src/data/unicode-script.ts');
 };

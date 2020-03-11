@@ -1,27 +1,15 @@
-// # unicode.ts
-//
-// > Provides Unicode property operations.
-
 import propertyAliases from 'unicode-property-aliases-ecmascript';
 import propertyValueAliases from 'unicode-property-value-aliases-ecmascript';
 
 import { CharSet } from './char-set';
-import { category } from './data/unicode-category';
-import { property } from './data/unicode-property';
-import { script, scriptExtensions } from './data/unicode-script';
+import { category, property, script, scriptExtensions } from './data/unicode';
 
+/** Cache for loaded `ChaeSet`. */
 const CACHE: Map<string, CharSet> = new Map();
 
-const loadData = (data: number[][]): CharSet => {
-  const set = new CharSet();
-  for (const r of data) {
-    set.add(r[0], r[1] || r[0] + 1);
-  }
-  return set;
-};
-
+/** Load `CharSet` corresponding to Unicode `General_Category` value. */
 const loadCategory = (v: string): CharSet | null => {
-  // Canonicalizes value name.
+  // Canonicalize value name.
   v = propertyValueAliases.get('General_Category')?.get(v) || v;
 
   const key = `General_Category.${v}`;
@@ -34,13 +22,14 @@ const loadCategory = (v: string): CharSet | null => {
   if (!data) {
     return null;
   }
-  const set = loadData(data);
+  const set = new CharSet(data);
   CACHE.set(key, set);
   return set;
 };
 
+/** Load `CharSet` corresponding to Unicode `Script` value. */
 const loadScript = (v: string): CharSet | null => {
-  // Canonicalizes value name.
+  // Canonicalize value name.
   v = propertyValueAliases.get('Script')?.get(v) || v;
 
   const key = `Script.${v}`;
@@ -53,13 +42,14 @@ const loadScript = (v: string): CharSet | null => {
   if (!data) {
     return null;
   }
-  const set = loadData(data);
+  const set = new CharSet(data);
   CACHE.set(key, set);
   return set;
 };
 
+/** Load `CharSet` corresponding to Unicode `Script_Extensions` value. */
 const loadScriptExtensions = (v: string): CharSet | null => {
-  // Canonicalizes value name.
+  // Canonicalize value name.
   v = propertyValueAliases.get('Script_Extensions')?.get(v) || v;
 
   const key = `Script_Extensions.${v}`;
@@ -77,15 +67,22 @@ const loadScriptExtensions = (v: string): CharSet | null => {
     return baseSet;
   }
 
-  const extSet = loadData(data);
+  const extSet = new CharSet(data);
   const set = baseSet.clone();
   set.addCharSet(extSet);
   CACHE.set(key, set);
   return set;
 };
 
-export const matchProperty = (p: string): CharSet | null => {
-  // Canonicalizes property name.
+/**
+ * Load `CharSet` corresponding to Unicode property.
+ *
+ * Return `null` if property is invalid.
+ *
+ * See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-runtime-semantics-unicodematchproperty-p.
+ */
+export const loadProperty = (p: string): CharSet | null => {
+  // Canonicalize property name.
   p = propertyAliases.get(p) || p;
 
   const set0 = CACHE.get(p);
@@ -98,13 +95,20 @@ export const matchProperty = (p: string): CharSet | null => {
     return null;
   }
 
-  const set = loadData(data);
+  const set = new CharSet(data);
   CACHE.set(p, set);
   return set;
 };
 
-export const matchPropertyValue = (p: string, v: string): CharSet | null => {
-  // Canonicalizes property name.
+/**
+ * Load `CharSet` corresponding to Unicode property and value.
+ *
+ * Return `null` if property or value is invalid.
+ *
+ * See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-runtime-semantics-unicodematchpropertyvalue-p-v.
+ */
+export const loadPropertyValue = (p: string, v: string): CharSet | null => {
+  // Canonicalize property name.
   p = propertyAliases.get(p) || p;
 
   switch (p) {

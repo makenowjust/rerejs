@@ -1,21 +1,23 @@
-// # make-unicode.ts
-//
-// > A generator for `src/data/unicode.ts` data.
-//
-// This script generates `foldMap`, `extraWordCharacters`, and `extraWhiteSpace`.
-// Also, a generated `unicode.js` contains `inverseFoldMap` calculation.
-// These data are used in `unicode` mode matching. Each data meaning are described
-// below.
-//
-// - `foldMap` is a `Map` to associate a code point to another code point,
-//   which ignore-case matching uses.
-//   (See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-runtime-semantics-canonicalize-ch)
-// - `inverseFoldMap` is inversed `Map` of `foldMap`.
-// - `extraWordCharacters` is a `Set` contains characters added to **WordCharacters**
-//   on ignore-case and `unicode` mode combination.
-//   (See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-runtime-semantics-wordcharacters-abstract-operation)
-// - `extraWhiteSpace` is a `Set` contains characters categorized by `Zs` (`Space_Separator`).
-//   These characters matches to `\s` in `RegExp`.
+/*
+ * A generator for `src/data/unicode.ts` data.
+ *
+ * This script generates `foldMap`, `extraWordCharacters`, `category`, `property`,
+ * `script` and `scriptExtensions`. Also, a generated `unicode.js` contains
+ * `inverseFoldMap` calculation. These data are used in `unicode` mode matching.
+ * Each data meaning are described below.
+ *
+ * - `foldMap` is a `Map` to associate a code point to another code point,
+ *   which ignore-case matching uses.
+ *   See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-runtime-semantics-canonicalize-ch.
+ * - `inverseFoldMap` is inversed `Map` of `foldMap`.
+ * - `extraWordCharacters` is a `Set` contains characters added to **WordCharacters**
+ *   on ignore-case and `unicode` mode combination.
+ *   See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-runtime-semantics-wordcharacters-abstract-operation.
+ * - `category` is a `Map` of `General_Category` values.
+ * - `property` is a `Map` of Unicode binary properties.
+ * - `script` is a `Map` of `Script` values and `scriptExtensions` is
+ *   a `Map` of `Script_Extensions` value differentials from `Script`.
+ */
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 
@@ -23,6 +25,9 @@ import assert from 'assert';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
+import { CATEGORY, makeCategoryData } from './make-unicode-category';
+import { PROPERTY, makePropertyData } from './make-unicode-property';
+import { SCRIPT, makeScriptData } from './make-unicode-script';
 import { hex, DATA_DIR } from './util';
 
 const makeExtraWordCharacters = (foldMap: Map<number, number>): string => {
@@ -32,7 +37,7 @@ const makeExtraWordCharacters = (foldMap: Map<number, number>): string => {
     )
   );
 
-  // Calculates `extraWordCharacters`.
+  // Calculate `extraWordCharacters`.
   const extraWordCharacters: number[] = [];
   for (const [c, d] of foldMap) {
     if (!wordCharacters.has(c) && wordCharacters.has(d)) {
@@ -40,16 +45,15 @@ const makeExtraWordCharacters = (foldMap: Map<number, number>): string => {
     }
   }
 
-  return `export const extraWordCharacters: Set<number> = new Set([${extraWordCharacters
-    .map(hex)
-    .join(', ')}]);\n`;
+  const content = extraWordCharacters.map(hex).join(', ');
+  return `export const extraWordCharacters: Set<number> = new Set([${content}]);\n`;
 };
 
 const makeFoldMap = (): string => {
   const common: Map<number, number> = require('unicode-12.0.0/Case_Folding/C/code-points.js');
   const simple: Map<number, number> = require('unicode-12.0.0/Case_Folding/S/code-points.js');
 
-  // Merges C and S mappings.
+  // Merge C and S mappings.
   const foldMap = new Map<number, number>();
   for (const [c, d] of common) {
     foldMap.set(c, d);
@@ -59,18 +63,19 @@ const makeFoldMap = (): string => {
     foldMap.set(c, d);
   }
 
-  // Generates output data.
-  let src = `export const foldMap: Map<number, number> = new Map([\n`;
+  // Generate output data.
+  let src = '';
+  src += 'export const foldMap: Map<number, number> = new Map([\n';
   for (const [c, d] of foldMap) {
     src += `  [${hex(c)}, ${hex(d)}],\n`;
   }
   src += ']);\n\n';
 
-  // Appends `inverseFoldMap` calculation.
+  // Append `inverseFoldMap` calculation.
   src += `export const inverseFoldMap: Map<number, number[]> = new Map();\n`;
   src += `for (const [c, d] of foldMap) {\n`;
   src += `  if (!inverseFoldMap.has(d)) {\n`;
-  src += `    inverseFoldMap.set(d, [d]);\n`;
+  src += `    inverseFoldMap.set(d, []);\n`;
   src += `  }\n`;
   src += `  inverseFoldMap.get(d)!.push(c);\n`;
   src += `}\n\n`;
@@ -80,17 +85,31 @@ const makeFoldMap = (): string => {
   return src;
 };
 
-const makeExtraWhiteSpace = (): string => {
-  const data: number[] = require('unicode-12.0.0/General_Category/Space_Separator/code-points.js');
-
-  return `export const extraWhiteSpace: Set<number> = new Set([${data.map(hex).join(', ')}]);\n`;
-};
-
 export const makeUnicode = async (): Promise<void> => {
   let src = '';
+  src += '// THIS SCRIPT IS GENERATED BY tools/make-unicode.ts. DO NOT EDIT!\n\n';
 
   src += makeFoldMap();
-  src += makeExtraWhiteSpace();
+  src += '\n';
+
+  src += 'export const category: Map<string, number[]> = new Map();\n';
+  for (const name of CATEGORY) {
+    src += makeCategoryData(name);
+  }
+  src += '\n';
+
+  src += 'export const property: Map<string, number[]> = new Map();\n';
+  for (const name of PROPERTY) {
+    src += makePropertyData(name);
+  }
+  src += '\n';
+
+  src += 'export const script: Map<string, number[]> = new Map();\n';
+  src += 'export const scriptExtensions: Map<string, number[]> = new Map();\n';
+  for (const name of SCRIPT) {
+    src += makeScriptData(name);
+  }
+  src += '\n';
 
   await fs.writeFile(path.join(DATA_DIR, 'unicode.ts'), src);
   console.log('==> src/data/unicode.ts');

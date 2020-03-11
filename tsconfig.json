@@ -2,11 +2,15 @@
   "compilerOptions": {
     "target": "es2019",
     "module": "commonjs",
-    "noEmit": true,
+    "declaration": true,
+    "declarationDir": "out",
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
     "strict": true,
     "moduleResolution": "node",
     "isolatedModules": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "exclude": ["node_modules/**/*", "out/**/*"]
 }

@@ -1,65 +1,131 @@
-// # match.ts
-//
-// > Defines `Match` class which is a result of `Program` execution.
+import util from 'util';
 
+/** `Match` is result data of regular expression pattern matching. */
 export class Match {
+  /** An input string of this matching. */
   public readonly input: string;
 
-  private readonly begins: readonly (number | undefined)[];
-  private readonly ends: readonly (number | undefined)[];
-  private readonly names: ReadonlyMap<string, number>;
+  private readonly caps: number[];
+  private readonly names: Map<string, number>;
 
-  constructor(
-    input: string,
-    begins: (number | undefined)[],
-    ends: (number | undefined)[],
-    names: ReadonlyMap<string, number>
-  ) {
+  /** @internal */
+  constructor(input: string, caps: number[], names: Map<string, number>) {
     this.input = input;
-    this.begins = begins;
-    this.ends = ends;
+    this.caps = caps;
     this.names = names;
   }
 
-  get length(): number {
-    return this.begins.length;
+  /** Return the initial index of this matching. */
+  public get index(): number {
+    return this.caps[0];
   }
 
+  /** Return the last index of this matching. */
+  public get lastIndex(): number {
+    return this.caps[1];
+  }
+
+  /**
+   * Return number of capture group.
+   *
+   * This number contains capture `0` (whole matching) also.
+   */
+  public get length(): number {
+    return this.caps.length / 2;
+  }
+
+  /** Get the capture `k`. */
   public get(k: number | string): string | undefined {
-    if (typeof k === 'string') {
-      const i = this.names.get(k);
-      if (!i) {
-        return undefined;
-      }
-      k = i;
+    const [i, j] = this.resolve(k);
+    if (i < 0 || j < 0) {
+      return undefined;
     }
-    return this.input.slice(this.begins[k], this.ends[k]);
+
+    return this.input.slice(i, j);
   }
 
-  public toArray(): RegExpMatchArray {
-    const array: (string | undefined)[] & RegExpMatchArray = [];
-    array.input = this.input;
-    array.index = this.begins[0];
+  /** Get the begin index of the capture `k`. */
+  public begin(k: number | string): number | undefined {
+    const i = this.resolve(k)[0];
+    return i < 0 ? undefined : i;
+  }
+
+  /** Get the end index of the capture `k`. */
+  public end(k: number | string): number | undefined {
+    const j = this.resolve(k)[1];
+    return j < 0 ? undefined : j;
+  }
+
+  /**
+   * Resolve name to capture index.
+   *
+   * If not resolved, it returns `-1`.
+   */
+  private resolve(k: number | string): [number, number] {
+    if (typeof k === 'string') {
+      k = this.names.get(k) ?? -1;
+    }
+    return [this.caps[k * 2] ?? -1, this.caps[k * 2 + 1] ?? -1];
+  }
+
+  /** Convert this into `RegExp`'s result array. */
+  public toArray(): RegExpExecArray {
+    // In TypeScript definition, `RegExpExecArray` extends `string[]`.
+    // However the **real** `RegExpExecArray` can contain `undefined`.
+    // So this method uses type casting to set properties.
+
+    const array: (string | undefined)[] = [];
+    (array as RegExpExecArray).input = this.input;
+    (array as RegExpExecArray).index = this.index;
+    array.length = this.length;
 
     for (let i = 0; i < this.length; i++) {
-      array.push(this.get(i));
+      array[i] = this.get(i);
     }
-    const groups: { [key: string]: string | undefined } = Object.create(null);
-    for (const [name, i] of this.names) {
-      groups[name] = array[i];
-    }
-    // In typescript 3.8.3 at least, `RegExpMatchArray`'s `groups` defined as `{[key: string]: string}`.
-    // However `groups` property value can contain `undefined`. It this TS  standard lib definition BUG?
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (array as any).groups = groups;
 
-    return array;
+    if (this.names.size > 0) {
+      const groups: { [key: string]: string | undefined } = Object.create(null);
+      for (const [name, i] of this.names) {
+        groups[name] = array[i];
+      }
+
+      // `RegExpExecArray`'s group does not accept `undefined` value, so cast to `any` for now.
+      (array as any).groups = groups; // eslint-disable-line @typescript-eslint/no-explicit-any
+    } else {
+      (array as RegExpExecArray).groups = undefined;
+    }
+
+    return array as RegExpExecArray;
   }
 
   public toString(): string {
     const array = this.toArray();
-    return `Match[${JSON.stringify(array).slice(1, -1)}, index: ${
-      this.begins[0]
-    }, groups: ${JSON.stringify(array.groups)}]`;
+    const show = (x: string | undefined): string =>
+      x === undefined ? 'undefined' : JSON.stringify(x);
+    return `Match[${array.map(show).join(', ')}]`;
+  }
+
+  public [util.inspect.custom](depth: number, options: util.InspectOptionsStylized): string {
+    let s = 'Match [\n';
+    const inverseNames = new Map(Array.from(this.names).map(([k, i]) => [i, k]));
+    const newOptions = {
+      ...options,
+      depth: depth === null ? depth : depth - 1
+    };
+    for (let i = 0; i < this.length; i++) {
+      const name = util.inspect(inverseNames.get(i) ?? i, newOptions);
+      let capture = this.get(i);
+      if (capture === undefined) {
+        s += `  ${name} => ${options.stylize('undefined', 'undefined')},\n`;
+        continue;
+      }
+      const begin = options.stylize(this.caps[i * 2].toString(), 'number');
+      const end = options.stylize(this.caps[i * 2 + 1].toString(), 'number');
+      capture = util.inspect(capture, newOptions);
+      s += `  ${name} [${begin}:${end}] =>`;
+      s += ` ${capture.split('\n').join('\n  ')},\n`;
+    }
+    s += ']';
+    return s;
   }
 }
