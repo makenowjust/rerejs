@@ -54,12 +54,22 @@ type RepeatQuantifier = {
   max: number;
 };
 
+/**
+ * `Parser` is parser for regular expression pattern.
+ *
+ * This parses ECMA-262 `RegExp` pattern syntax.
+ * See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-patterns.
+ *
+ * Also, "Additional ECMAScript Features for Web Browsers" is supported if `additional` flag is `true` (default).
+ * See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-regular-expressions-patterns.
+ */
 export class Parser {
+  /** The source pattern string to parse. */
   private source: string;
+  /** The flags string. */
   private flags: string;
 
-  private pos = 0;
-
+  // Parsed flags.
   private global = false;
   private ignoreCase = false;
   private multiline = false;
@@ -74,8 +84,14 @@ export class Parser {
    */
   private additional: boolean;
 
+  /** Precalculated number of capture group parens. */
   private captureParens = 0;
+  /** Precalculated `Map` associate from capture group name to its index. */
   private names: Map<string, number> = new Map();
+
+  /** The current position of `source` string on parsing. */
+  private pos = 0;
+  /** The current capture group parens index number. */
   private captureParensIndex = 0;
 
   constructor(source: string, flags = '', additional = true) {
@@ -84,6 +100,7 @@ export class Parser {
     this.additional = additional;
   }
 
+  /** Run this parser. */
   public parse(): Pattern {
     this.preprocessFlags();
     this.preprocessCaptures();
@@ -154,7 +171,12 @@ export class Parser {
     }
   }
 
-  /** Count number of capture group parens, and collect names. */
+  /**
+   * Count number of capture group parens, and collect names.
+   *
+   * This process is needed before parsing because the syntax changes
+   * its behavior when a pattern has named captrue.
+   */
   private preprocessCaptures(): void {
     while (this.pos < this.source.length) {
       const c = this.current();
@@ -189,6 +211,7 @@ export class Parser {
     }
   }
 
+  /** Skip character class without parsing. */
   private skipCharClass(): void {
     this.pos += 1; // skip '['
     while (this.pos < this.source.length) {
@@ -208,6 +231,12 @@ export class Parser {
     }
   }
 
+  /**
+   * Parse `select` pattern.
+   *
+   * `select` is named `Disjunction` in ECMA-262 specification.
+   * See https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Disjunction.
+   */
   private parseSelect(): Node {
     const children: [Node, ...Node[]] = [this.parseSequence()];
 
@@ -226,6 +255,16 @@ export class Parser {
     return { type: 'select', children };
   }
 
+  /**
+   * Parse `sequence` pattern.
+   *
+   * `sequence` is named `Alternative` in ECMA-262 specification.
+   * However this naming is very confusing because
+   * it does not make sence without the relation to `Disjunction`.
+   * In formal language theory, `sequence` or `concatination` is better.
+   *
+   * See https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Disjunction
+   */
   private parseSequence(): Node {
     const children = [];
 
@@ -243,6 +282,17 @@ export class Parser {
     return { type: 'sequence', children };
   }
 
+  /**
+   * Parse `quantifier` pattern.
+   *
+   * `quantifier` is one of `*`, `+`, `?` and `{n,m}` suffix operators,
+   * and they can follow `?` for non-greedy matching.
+   *
+   * Note that ECMA-262 specification does not allow to quantify assertions like `/\b/`.
+   *
+   * See https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Quantifier,
+   * and https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Term.
+   */
   private parseQuantifier(): Node {
     const child = this.parseAtom();
 
@@ -268,6 +318,11 @@ export class Parser {
     return child;
   }
 
+  /**
+   * Parse simple quantifier suffix.
+   *
+   * Simple quantifier suffix means quantifiers execpt for `{n,m}`.
+   */
   private parseSimpleQuantifier(type: 'many' | 'some' | 'optional', child: Node): Node {
     this.pos += 1; // skip one of '*', '+', '?'
     let nonGreedy = false;
@@ -278,16 +333,27 @@ export class Parser {
     return { type, nonGreedy, child };
   }
 
+  /**
+   * Parse repeat quantifier suffix (`{n}`, `{n,m}` or `{n,}`).
+   *
+   * When parsing is failed, however it is in `additional` mode,
+   * it is retryable. And the real parsing is done by
+   * `tryParseRepeatQuantifier` method.
+   */
   private parseRepeat(child: Node): Node {
     const save = this.pos;
     const quantifier = this.tryParseRepeatQuantifier();
     if (quantifier === null) {
-      return this.parseInvalidRepeat(save, child, 'incomplete quantifier');
+      if (this.additional && !this.unicode) {
+        this.pos = save;
+        return child;
+      }
+      throw new RegExpSyntaxError('incomplete quantifier');
     }
 
     const { min, max } = quantifier;
     if (min > max) {
-      return this.parseInvalidRepeat(save, child, 'numbers out of order in quantifier');
+      throw new RegExpSyntaxError('numbers out of order in quantifier');
     }
 
     let nonGreedy = false;
@@ -299,6 +365,15 @@ export class Parser {
     return { type: 'repeat', min, max, nonGreedy, child };
   }
 
+  /**
+   * Try to parse repeat quantifier.
+   *
+   * This method is separated from `parseRepeat` because
+   * it is reused by `parseAtom` to detect "nothing to repeat" error
+   * of repeat quantifier.
+   *
+   * When parsing is failed, it does not consume any character and return `null`.
+   */
   private tryParseRepeatQuantifier(): RepeatQuantifier | null {
     const save = this.pos;
     this.pos += 1; // skip '{'
@@ -332,14 +407,14 @@ export class Parser {
     return { min, max };
   }
 
-  private parseInvalidRepeat(save: number, child: Node, message: string): Node {
-    if (this.additional && !this.unicode) {
-      this.pos = save;
-      return child;
-    }
-    throw new RegExpSyntaxError(message);
-  }
-
+  /**
+   * Parse `atom` pattern.
+   *
+   * This method also parses `assertion` pattern.
+   *
+   * See https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Assertion,
+   * and https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Atom.
+   */
   private parseAtom(): Node {
     const c = this.current();
     switch (c) {
@@ -357,12 +432,17 @@ export class Parser {
       case '?':
         throw new RegExpSyntaxError('nothing to repeat');
       case '{':
-      case '}':
         if (this.additional && !this.unicode) {
           const quantifier = this.tryParseRepeatQuantifier();
-          if (quantifier === null) {
-            break;
+          if (quantifier !== null) {
+            throw new RegExpSyntaxError('nothing to repeat');
           }
+          break;
+        }
+        throw new RegExpSyntaxError('lone quantifier brackets');
+      case '}':
+        if (this.additional && !this.unicode) {
+          break;
         }
         throw new RegExpSyntaxError('lone quantifier brackets');
       case '[':
@@ -379,8 +459,11 @@ export class Parser {
       case ')':
       case '|':
       case '':
+        // Because this characters are handled by `parseSequence`.
         throw new Error('BUG: invalid character');
     }
+
+    // All cases are through, then it should be a simple source character.
 
     this.pos += c.length; // skip any character
     const value = c.codePointAt(0);
@@ -390,6 +473,7 @@ export class Parser {
     return { type: 'char', value, raw: c };
   }
 
+  /** Parse `character class` pattern. */
   private parseClass(): Node {
     this.pos++; // skip '['
 
@@ -413,6 +497,7 @@ export class Parser {
     return { type: 'class', invert, items };
   }
 
+  /** Parse an item of `character class` pattern. */
   private parseClassItem(): ClassItem {
     const begin = this.parseClassAtom();
     if (this.current() !== '-') {
@@ -443,6 +528,7 @@ export class Parser {
     return { type: 'class_range', begin, end };
   }
 
+  /** Parse an atom of `character class` range. */
   private parseClassAtom(): Char | EscapeClass {
     const c = this.current();
     if (c === '') {
@@ -481,6 +567,10 @@ export class Parser {
     throw new RegExpSyntaxError('invalid escape');
   }
 
+  /**
+   * Parse `escape sequence` pattern including `escape sequence character class`,
+   * `back reference` and `word boundary assertion` patterns.
+   */
   private parseEscape(): Node {
     const wordBoundary = this.tryParseWordBoundary();
     if (wordBoundary !== null) {
@@ -505,6 +595,7 @@ export class Parser {
     throw new RegExpSyntaxError('invalid escape');
   }
 
+  /** Try to parse `word boundary` pattern. */
   private tryParseWordBoundary(): Node | null {
     if (this.source.startsWith('\\b', this.pos)) {
       this.pos += 2; // skip '\\b'
@@ -513,19 +604,20 @@ export class Parser {
 
     if (this.source.startsWith('\\B', this.pos)) {
       this.pos += 2; // skip '\\B'
-      return { type: 'word_boundary', invert: false };
+      return { type: 'word_boundary', invert: true };
     }
 
     return null;
   }
 
+  /** Try to parse `back reference` pattern. */
   private tryParseBackRef(): Node | null {
     const save = this.pos;
     this.pos++; // skip '\\';
 
     if (this.names.size > 0) {
       if (this.current() === 'k') {
-        this.pos++; // skip 'k';
+        this.pos++; // skip 'k'
         if (this.current() !== '<') {
           throw new RegExpSyntaxError('invalid named back reference');
         }
@@ -552,6 +644,7 @@ export class Parser {
     return null;
   }
 
+  /** Try to parse `escape sequence` pattern. */
   private tryParseEscape(): Char | null {
     const save = this.pos;
 
@@ -598,19 +691,24 @@ export class Parser {
         return { type: 'char', value, raw: this.source.slice(save, this.pos) };
       }
       case 'x': {
+        const save = this.pos;
         this.pos++; // skip 'x'
         const value = this.tryParseHexDigitsN(2);
         if (value < 0) {
+          this.pos = save;
           break;
         }
         return { type: 'char', value, raw: this.source.slice(save, this.pos) };
       }
-      case '0':
-        this.pos++;
+      case '0': {
+        const save = this.pos;
+        this.pos++; // skip '0'
         if (isDigit(this.current())) {
+          this.pos = save;
           break;
         }
         return { type: 'char', value: 0, raw: '\\0' };
+      }
       case '':
         throw new RegExpSyntaxError('\\ at end of pattern');
     }
@@ -674,6 +772,14 @@ export class Parser {
     return null;
   }
 
+  /**
+   * Try to parse `\uXXXX` or `\u{XXXXXX}` escape sequence.
+   *
+   * This method is separated from `tryParseEscape` because
+   * it is reused by `parseCaptureNameChar`.
+   *
+   * When it is failed, it returns `''`.
+   */
   private tryParseUnicodeEscape(lead = true): string {
     const save = this.pos;
     this.pos++; // skip '\\'
@@ -724,6 +830,7 @@ export class Parser {
     return s;
   }
 
+  /** Try to parse `escape sequence character class` pattern. */
   private tryParseEscapeClass(): EscapeClass | null {
     const save = this.pos;
     this.pos++; // skip '\\'
@@ -788,6 +895,7 @@ export class Parser {
     return null;
   }
 
+  /** Parse the first component of `\p{XXX=XXX}` escape sequence. */
   private parseUnicodePropertyName(): string {
     let p = '';
     for (;;) {
@@ -801,6 +909,7 @@ export class Parser {
     return p;
   }
 
+  /** Parse the second component of `\p{XXX=XXX}` escape sequence. */
   private parseUnicodePropertyValue(): string {
     let v = '';
     for (;;) {
@@ -814,6 +923,7 @@ export class Parser {
     return v;
   }
 
+  /** Parse grouping pattern by paren. */
   private parseParen(): Node {
     if (!this.source.startsWith('(?', this.pos)) {
       this.pos++; // skip '('
@@ -894,6 +1004,11 @@ export class Parser {
     throw new RegExpSyntaxError('invalid group');
   }
 
+  /**
+   * Parse capture name.
+   *
+   * This method is used by `preprocessParens`, `tryParseBackRef` and `parseParen`.
+   */
   private parseCaptureName(): string {
     let name = '';
     const start = this.parseCaptureNameChar();
@@ -920,6 +1035,11 @@ export class Parser {
     return name;
   }
 
+  /**
+   * Parse capture name character.
+   *
+   * Unicode escape sequences are used as capture name character.
+   */
   private parseCaptureNameChar(): string {
     const c = this.current();
     if (c === '\\') {
