@@ -61,6 +61,7 @@ A list of op-codes (in alphabetical order):
 - `cap_reset i j`
 - `char c`
 - `class s`
+- `class_not s`
 - `dec`
 - `empty_check`
 - `fail`
@@ -71,7 +72,6 @@ A list of op-codes (in alphabetical order):
 - `line_end`
 - `loop #cont`
 - `match`
-- `not_word_boundary`
 - `pop`
 - `push n`
 - `push_pos`
@@ -81,6 +81,7 @@ A list of op-codes (in alphabetical order):
 - `restore_pos`
 - `rewind_proc`
 - `word_boundary`
+- `word_boundary_not`
 
 Detailed explanations are below.
 
@@ -126,6 +127,11 @@ If matched, advance `pos` by the current character size, or else do backtrack.
 
 Try to match the current character with the character set `s`.
 If matched, advance `pos` by the current character size, or else do backtrack.
+
+### `class_not s`
+
+Try to match the current character with the character set `s`.
+If not matched, advance `pos` by the current character size, or else do backtrack.
 
 ### `dec`
 
@@ -186,21 +192,10 @@ This op-code is corresponding to line-end assertion `$`.
 ### `loop #cont`
 
 If the `stack` top value is greater than `0`, set the current `pc` to `#cont`.
-If it is `0`, pop it from `stack`.
 
 ### `match`
 
 Halt VM execution as matched.
-
-### `not_word_boundary`
-
-When the current character is word character and
-the previous character is not word character or vice versa,
-it is not matched.
-
-If not matched, do backtrack.
-
-This op-code is corresponding to not word boundary assertion `\B`.
 
 ### `pop`
 
@@ -255,6 +250,16 @@ it is matched.
 If not matched, do backtrack.
 
 This op-code is corresponding to word boundary assertion `\b`.
+
+### `word_boundary_not`
+
+When the current character is word character and
+the previous character is not word character or vice versa,
+it is not matched.
+
+If not matched, do backtrack.
+
+This op-code is corresponding to not word boundary assertion `\B`.
 
 ## Reference
 
