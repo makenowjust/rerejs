@@ -8,7 +8,6 @@
     "emitDeclarationOnly": true,
     "strict": true,
     "moduleResolution": "node",
-    "isolatedModules": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },

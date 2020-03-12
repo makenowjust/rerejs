@@ -115,7 +115,7 @@ export class CharSet {
   }
 
   private [util.inspect.custom](_depth: number, options: util.InspectOptionsStylized): string {
-    let s = 'CharSet ';
+    let s = `${options.stylize('CharSet', 'special')} `;
     s += options.stylize(this.toRegExpPattern(), 'regexp');
     return s;
   }

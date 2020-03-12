@@ -32,36 +32,13 @@ export type OpCode =
   | { op: 'word_boundary' }
   | { op: 'word_boundary_not' };
 
-/** Calculate the maximum stack size without execution. */
-export const calculateMaxStackSize = (codes: OpCode[]): number => {
-  let stackSize = 0;
-  let maxStackSize = 0;
-  for (const code of codes) {
-    switch (code.op) {
-      case 'push':
-      case 'push_pos':
-      case 'push_proc':
-        stackSize++;
-        break;
-      case 'empty_check':
-      case 'pop':
-      case 'restore_pos':
-      case 'rewind_proc':
-        stackSize--;
-        break;
-    }
-    maxStackSize = Math.max(stackSize, maxStackSize);
-  }
-  return maxStackSize;
-};
-
 /** Show op-codes as string. */
 export const codesToString = (codes: OpCode[]): string => {
   const pc = (i: number): string => `#${i.toString().padStart(3, '0')}`;
   const op = (s: string): string => s.padEnd(13, ' ');
 
   const lines = codes.map((code, lineno) => {
-    let line = `  ${pc(lineno)}: ${op(code.op)}`;
+    let line = `${pc(lineno)}: ${op(code.op)}`;
 
     switch (code.op) {
       case 'cap_begin':
@@ -84,7 +61,7 @@ export const codesToString = (codes: OpCode[]): string => {
         break;
       case 'jump':
       case 'loop':
-        line += `${pc(lineno + 1 * code.cont)}`;
+        line += `${pc(lineno + 1 + code.cont)}`;
         break;
       case 'push':
         line += `${code.value}`;

@@ -106,11 +106,11 @@ export class Match {
   }
 
   public [util.inspect.custom](depth: number, options: util.InspectOptionsStylized): string {
-    let s = 'Match [\n';
+    let s = `${options.stylize('Match', 'special')} [\n`;
     const inverseNames = new Map(Array.from(this.names).map(([k, i]) => [i, k]));
     const newOptions = {
       ...options,
-      depth: depth === null ? depth : depth - 1
+      depth: options.depth == null ? null : options.depth - 1
     };
     for (let i = 0; i < this.length; i++) {
       const name = util.inspect(inverseNames.get(i) ?? i, newOptions);

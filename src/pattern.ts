@@ -2,16 +2,23 @@ import { escape } from './escape';
 
 /** Type for whole regular expression pattern. */
 export type Pattern = {
-  type: 'pattern';
+  type: 'Pattern';
+  flags: string;
+  flagSet: FlagSet;
+  captureParens: number;
+  names: Map<string, number>;
+  child: Node;
+  range: [number, number];
+};
+
+/** Types for regular expression flags. */
+export type FlagSet = {
   global: boolean;
   ignoreCase: boolean;
   multiline: boolean;
   unicode: boolean;
   dotAll: boolean;
   sticky: boolean;
-  captureParens: number;
-  names: Map<string, number>;
-  child: Node;
 };
 
 /** Type for part of regular expression pattern. */
@@ -42,101 +49,116 @@ export type ClassItem = Char | EscapeClass | ClassRange;
 
 /** Type for select pattern `/(a|b)/`. */
 export type Select = {
-  type: 'select';
-  children: [Node, ...Node[]];
+  type: 'Select';
+  children: Node[];
+  range: [number, number];
 };
 
 /** Type for sequence pattern `/(ab)/`. */
 export type Sequence = {
-  type: 'sequence';
+  type: 'Sequence';
   children: Node[];
+  range: [number, number];
 };
 
 /** Type for capture group `/(...)/`. */
 export type Capture = {
-  type: 'capture';
+  type: 'Capture';
   index: number;
   child: Node;
+  range: [number, number];
 };
 
 /** Type for named capture group `/(?<x>...)/`. */
 export type NamedCapture = {
-  type: 'named_capture';
+  type: 'NamedCapture';
   name: string;
   child: Node;
+  range: [number, number];
 };
 
 /** Type for non-capture group `/(?:...)/`. */
 export type Group = {
-  type: 'group';
+  type: 'Group';
   child: Node;
+  range: [number, number];
 };
 
 /** Type for zero-or-more repetition pattern `/(a*)/`. */
 export type Many = {
-  type: 'many';
+  type: 'Many';
   nonGreedy: boolean;
   child: Node;
+  range: [number, number];
 };
 
 /** Type for one-or-more repetition pattern `/(a+)/`. */
 export type Some = {
-  type: 'some';
+  type: 'Some';
   nonGreedy: boolean;
   child: Node;
+  range: [number, number];
 };
 
 /** Type for skippable pattern `/(a?)/`. */
 export type Optional = {
-  type: 'optional';
+  type: 'Optional';
   nonGreedy: boolean;
   child: Node;
+  range: [number, number];
 };
 
 /** Type for general repetition pattern `/(a{10,20})/`. */
 export type Repeat = {
-  type: 'repeat';
+  type: 'Repeat';
   min: number;
   max: number;
   nonGreedy: boolean;
   child: Node;
+  range: [number, number];
 };
 
 /** Type for word boundary assertion pattern `/(\b)/`. */
 export type WordBoundary = {
-  type: 'word_boundary';
+  type: 'WordBoundary';
   invert: boolean;
+  range: [number, number];
 };
 
 /** Type for line begin assertion pattern `/(^)/`. */
 export type LineBegin = {
-  type: 'line_begin';
+  type: 'LineBegin';
+  range: [number, number];
 };
 
 /** Type for line end assertion pattern `/($)/`. */
 export type LineEnd = {
-  type: 'line_end';
+  type: 'LineEnd';
+  range: [number, number];
 };
 
 /** Type for look-ahead assertion `/(?=a)/`. */
 export type LookAhead = {
-  type: 'look_ahead';
+  type: 'LookAhead';
   negative: boolean;
   child: Node;
+  range: [number, number];
 };
 
 /** Type for look-behind assertion `/(?<=a)/`. */
 export type LookBehind = {
-  type: 'look_behind';
+  type: 'LookBehind';
   negative: boolean;
   child: Node;
+  range: [number, number];
 };
 
 /** Type for character pattern `/a/`. */
 export type Char = {
-  type: 'char';
+  type: 'Char';
   value: number;
   raw: string;
+  range: [number, number];
 };
 
 /** Type for escape sequence class like `/\w/`. */
@@ -147,65 +169,73 @@ export type EscapeClass =
 
 /** Type for simple escape sequence class like `/\d/`. */
 export type SimpleEscapeClass = {
-  type: 'escape_class';
+  type: 'EscapeClass';
   kind: 'digit' | 'word' | 'space';
   invert: boolean;
+  range: [number, number];
 };
 
 /** Type for unicode property escape sequence class like `\p{Zs}`. */
 export type UnicodePropertyEscapeClass = {
-  type: 'escape_class';
+  type: 'EscapeClass';
   kind: 'unicode_property';
   invert: boolean;
   property: string;
+  range: [number, number];
 };
 
 /** Type for unicode property value escape sequence class like `\p{Script=Hira}`. */
 export type UnicodePropertyValueEscapeClass = {
-  type: 'escape_class';
+  type: 'EscapeClass';
   kind: 'unicode_property_value';
   invert: boolean;
   property: string;
   value: string;
+  range: [number, number];
 };
 
 /** Type for character class pattern `/[a-z]/`. */
 export type Class = {
-  type: 'class';
+  type: 'Class';
   invert: boolean;
   items: ClassItem[];
+  range: [number, number];
 };
 
 /** Type for character range in class pattern. */
 export type ClassRange = {
-  type: 'class_range';
+  type: 'ClassRange';
   begin: Char;
   end: Char;
+  range: [number, number];
 };
 
 /** Type for any character pattern `/./`. */
 export type Dot = {
-  type: 'dot';
+  type: 'Dot';
+  range: [number, number];
 };
 
 /** Type for back reference pattern `/\1/`. */
 export type BackRef = {
-  type: 'back_ref';
+  type: 'BackRef';
   index: number;
+  range: [number, number];
 };
 
 /** Type for named back reference pattern `/\k<x>/`. */
 export type NamedBackRef = {
-  type: 'named_back_ref';
+  type: 'NamedBackRef';
   name: string;
+  range: [number, number];
 };
 
 /** Show class item as string. */
 const classItemToString = (n: ClassItem): string => {
   switch (n.type) {
-    case 'char':
+    case 'Char':
       return escape(n.value, true);
-    case 'escape_class':
+    case 'EscapeClass':
       switch (n.kind) {
         case 'digit':
           return n.invert ? '\\D' : '\\d';
@@ -219,7 +249,7 @@ const classItemToString = (n: ClassItem): string => {
           return `\\${n.invert ? 'P' : 'p'}{${n.property}=${n.value}}`;
       }
       break;
-    case 'class_range':
+    case 'ClassRange':
       return `${escape(n.begin.value, true)}-${escape(n.end.value, true)}`;
   }
 };
@@ -227,47 +257,47 @@ const classItemToString = (n: ClassItem): string => {
 /** Show node as string. */
 export const nodeToString = (n: Node): string => {
   switch (n.type) {
-    case 'sequence':
+    case 'Sequence':
       return n.children.map(nodeToString).join('');
-    case 'select':
+    case 'Select':
       return n.children.map(nodeToString).join('|');
-    case 'capture':
+    case 'Capture':
       return `(${nodeToString(n.child)})`;
-    case 'named_capture':
+    case 'NamedCapture':
       return `(?<${n.name}>${nodeToString(n.child)})`;
-    case 'group':
+    case 'Group':
       return `(?:${nodeToString(n.child)})`;
-    case 'many':
-    case 'some':
-    case 'optional':
-    case 'repeat': {
+    case 'Many':
+    case 'Some':
+    case 'Optional':
+    case 'Repeat': {
       let s = nodeToString(n.child);
       switch (n.child.type) {
-        case 'sequence':
-        case 'select':
-        case 'many':
-        case 'some':
-        case 'optional':
-        case 'repeat':
-        case 'word_boundary':
-        case 'line_begin':
-        case 'line_end':
-        case 'look_ahead':
-        case 'look_behind':
+        case 'Sequence':
+        case 'Select':
+        case 'Many':
+        case 'Some':
+        case 'Optional':
+        case 'Repeat':
+        case 'WordBoundary':
+        case 'LineBegin':
+        case 'LineEnd':
+        case 'LookAhead':
+        case 'LookBehind':
           s = `(?:${s})`;
           break;
       }
       switch (n.type) {
-        case 'many':
+        case 'Many':
           s += '*';
           break;
-        case 'some':
+        case 'Some':
           s += '+';
           break;
-        case 'optional':
+        case 'Optional':
           s += '?';
           break;
-        case 'repeat':
+        case 'Repeat':
           s += `{${n.min}`;
           if (n.max === Infinity) {
             s += ',';
@@ -282,29 +312,53 @@ export const nodeToString = (n: Node): string => {
       }
       return s;
     }
-    case 'word_boundary':
+    case 'WordBoundary':
       return n.invert ? '\\B' : '\\b';
-    case 'line_begin':
+    case 'LineBegin':
       return '^';
-    case 'line_end':
+    case 'LineEnd':
       return '$';
-    case 'look_ahead':
+    case 'LookAhead':
       return `(?${n.negative ? '!' : '='}${nodeToString(n.child)})`;
-    case 'look_behind':
+    case 'LookBehind':
       return `(?<${n.negative ? '!' : '='}${nodeToString(n.child)})`;
-    case 'char':
+    case 'Char':
       return escape(n.value);
-    case 'escape_class':
+    case 'EscapeClass':
       return classItemToString(n);
-    case 'class':
+    case 'Class':
       return `[${n.invert ? '^' : ''}${n.items.map(classItemToString).join('')}]`;
-    case 'dot':
+    case 'Dot':
       return '.';
-    case 'back_ref':
+    case 'BackRef':
       return `\\${n.index}`;
-    case 'named_back_ref':
+    case 'NamedBackRef':
       return `\\k<${n.name}>`;
   }
+};
+
+/** Show flag set as string. */
+export const flagSetToString = (set: FlagSet): string => {
+  let s = '';
+  if (set.global) {
+    s += 'g';
+  }
+  if (set.ignoreCase) {
+    s += 'i';
+  }
+  if (set.multiline) {
+    s += 'm';
+  }
+  if (set.unicode) {
+    s += 'u';
+  }
+  if (set.dotAll) {
+    s += 's';
+  }
+  if (set.sticky) {
+    s += 'y';
+  }
+  return s;
 };
 
 /** Show pattern as string. */
@@ -312,23 +366,6 @@ export const patternToString = (p: Pattern): string => {
   let s = '/';
   s += nodeToString(p.child);
   s += '/';
-  if (p.global) {
-    s += 'g';
-  }
-  if (p.ignoreCase) {
-    s += 'i';
-  }
-  if (p.multiline) {
-    s += 'm';
-  }
-  if (p.unicode) {
-    s += 'u';
-  }
-  if (p.dotAll) {
-    s += 's';
-  }
-  if (p.sticky) {
-    s += 'y';
-  }
+  s += flagSetToString(p.flagSet);
   return s;
 };
