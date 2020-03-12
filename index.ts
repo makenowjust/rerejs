@@ -1,3 +1,4 @@
+export * from './src/char-set';
 export * from './src/compiler';
 export * from './src/match';
 export * from './src/op-code';
