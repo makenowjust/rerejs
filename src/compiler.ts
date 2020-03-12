@@ -39,6 +39,7 @@ import {
 import { Program } from './program';
 import { loadProperty, loadPropertyValue } from './unicode';
 
+/** `Compiler` is a compiler for `Pattern` to `Program`. */
 export class Compiler {
   private pattern: Pattern;
 
@@ -66,6 +67,7 @@ export class Compiler {
     this.pattern = pattern;
   }
 
+  /** Run compiler and return compiled `Program`. */
   public compile(): Program {
     const codes0 = this.compileNode(this.pattern.child);
     const codes1: OpCode[] = [
@@ -401,7 +403,7 @@ export class Compiler {
   }
 
   private compileBackRef(node: BackRef): OpCode[] {
-    if (node.index < 1 || this.captureParensIndex < node.index) {
+    if (node.index < 1 || this.captureParens < node.index) {
       throw new Error('invalid back reference');
     }
     this.advance = false;
@@ -410,7 +412,7 @@ export class Compiler {
 
   private compileNamedBackRef(node: NamedBackRef): OpCode[] {
     const index = this.names.get(node.name);
-    if (index === undefined || index < 1 || this.captureParensIndex < index) {
+    if (index === undefined || index < 1 || this.captureParens < index) {
       throw new Error('invalid named back reference');
     }
     this.advance = false;

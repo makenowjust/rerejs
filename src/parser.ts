@@ -1,4 +1,4 @@
-import { CharSet, MAX_CODE_POINT } from './char-set';
+import { CharSet } from './char-set';
 import { property } from './data/unicode';
 import { RegExpSyntaxError } from './error';
 import { Pattern, Node, ClassItem, Char, EscapeClass, FlagSet } from './pattern';
@@ -841,7 +841,7 @@ export class Parser {
       }
       this.pos++; // skip '{'
       const c = this.parseHexDigits();
-      if (c < 0 || MAX_CODE_POINT <= c || this.current() !== '}') {
+      if (c < 0 || 0x110000 <= c || this.current() !== '}') {
         throw new RegExpSyntaxError('invalid Unicode escape');
       }
       this.pos++; // skip '}'

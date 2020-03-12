@@ -151,7 +151,6 @@ export class Program {
     return this.pattern.names;
   }
 
-  /** @internal */
   constructor(pattern: Pattern, codes: OpCode[]) {
     this.pattern = pattern;
     this.codes = codes;

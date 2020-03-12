@@ -3,7 +3,7 @@ import util from 'util';
 import { escape } from './escape';
 
 /** The maximum valid code point of Unicode. */
-export const MAX_CODE_POINT = 0x110000;
+const MAX_CODE_POINT = 0x110000;
 
 /** `CharSet` is a set of code points. */
 export class CharSet {

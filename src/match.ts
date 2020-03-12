@@ -8,7 +8,6 @@ export class Match {
   private readonly caps: number[];
   private readonly names: Map<string, number>;
 
-  /** @internal */
   constructor(input: string, caps: number[], names: Map<string, number>) {
     this.input = input;
     this.caps = caps;
