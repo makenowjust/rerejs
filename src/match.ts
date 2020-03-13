@@ -74,8 +74,8 @@ export class Match {
     // So this method uses type casting to set properties.
 
     const array: (string | undefined)[] = [];
-    (array as RegExpExecArray).input = this.input;
     (array as RegExpExecArray).index = this.index;
+    (array as RegExpExecArray).input = this.input;
     array.length = this.length;
 
     for (let i = 0; i < this.length; i++) {

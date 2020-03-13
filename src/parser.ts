@@ -113,7 +113,6 @@ export class Parser {
 
     return {
       type: 'Pattern',
-      flags: this.flags,
       flagSet: this.flagSet,
       captureParens: this.captureParens,
       names: this.names,

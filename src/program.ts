@@ -199,7 +199,7 @@ export class Program {
         switch (code.op) {
           case 'any': {
             const c = index(input, proc.pos, this.unicode);
-            if (this.dotAll || !isLineTerminator(c)) {
+            if (c >= 0 && (this.dotAll || !isLineTerminator(c))) {
               proc.pos += size(c);
             } else {
               backtrack = true;
@@ -423,7 +423,8 @@ export class Program {
       if (this.sticky) {
         break;
       }
-      pos++;
+
+      pos += size(index(input, pos, this.unicode));
     }
 
     return null;

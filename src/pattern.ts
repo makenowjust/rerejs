@@ -3,7 +3,6 @@ import { escape } from './escape';
 /** Type for whole regular expression pattern. */
 export type Pattern = {
   type: 'Pattern';
-  flags: string;
   flagSet: FlagSet;
   captureParens: number;
   names: Map<string, number>;
