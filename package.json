@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "rere",
+  "name": "rerejs",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
