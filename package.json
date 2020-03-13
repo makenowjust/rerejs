@@ -1,7 +1,14 @@
 {
-  "private": true,
   "name": "rerejs",
   "version": "0.0.0",
+  "description": "Re-implementation of JavaScript RegExp",
+  "author": "TSUYUSATO Kitsune <make.just.on@gmail.com>",
+  "bugs": "https://github.com/MakeNowJust/rerejs/issues",
+  "homepage": "https://github.com/MakeNowJust/rerejs#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MakeNowJust/rerejs.git"
+  },
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
