@@ -1,12 +1,12 @@
 # ReRE.js
 
 <p>
-  <b>Re</b>-implementation of ECMA-262 <code><b>R</b>eg<b>E</b>xp</code>.
+  <b>Re</b>-implementation of ECMA-262 (JavaScript) <code><b>R</b>eg<b>E</b>xp</code>.
 </p>
 
 ## About
 
-ReRE.js is a framework for processing ECMA-262 (JavaScript standard) `RegExp`.
+ReRE.js is a framework for processing [ECMA-262][] (JavaScript standard) `RegExp`.
 It provides:
 
 - **parser** which constructs AST nodes from a `RegExp` pattern string,
@@ -22,6 +22,7 @@ ReRE.js supports the latest `RegExp` features:
 Moreover, ReRE.js supports ["Additional ECMAScript Features for Web Browsers"][] for `RegExp`.
 It means robust, so it can parse some terrible real-world `RegExp` patterns correctly.
 
+[ECMA-262]: https://www.ecma-international.org/ecma-262/10.0/index.html
 ["Additional ECMAScript Features for Web Browsers"]: https://www.ecma-international.org/ecma-262/10.0/index.html#sec-regular-expressions-patterns
 
 ## Getting Started
