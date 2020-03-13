@@ -1,6 +1,6 @@
 {
   "name": "rerejs",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Re-implementation of JavaScript RegExp",
   "author": "TSUYUSATO Kitsune <make.just.on@gmail.com>",
   "bugs": "https://github.com/MakeNowJust/rerejs/issues",
