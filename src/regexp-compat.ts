@@ -93,12 +93,12 @@ class RegExpCompat implements RegExp {
     return this.pattern.flagSet.multiline;
   }
 
-  public get unicode(): boolean {
-    return this.pattern.flagSet.unicode;
-  }
-
   public get dotAll(): boolean {
     return this.pattern.flagSet.dotAll;
+  }
+
+  public get unicode(): boolean {
+    return this.pattern.flagSet.unicode;
   }
 
   public get sticky(): boolean {

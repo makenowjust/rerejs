@@ -123,10 +123,6 @@ export class Program {
   /** Pre-calculated maximum stack size. */
   private maxStackSize: number;
 
-  private get unicode(): boolean {
-    return this.pattern.flagSet.unicode;
-  }
-
   private get ignoreCase(): boolean {
     return this.pattern.flagSet.ignoreCase;
   }
@@ -137,6 +133,10 @@ export class Program {
 
   private get dotAll(): boolean {
     return this.pattern.flagSet.dotAll;
+  }
+
+  private get unicode(): boolean {
+    return this.pattern.flagSet.unicode;
   }
 
   private get sticky(): boolean {

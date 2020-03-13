@@ -152,17 +152,17 @@ export class Parser {
           }
           flagSet.multiline = true;
           break;
-        case 'u':
-          if (flagSet.unicode) {
-            throw new RegExpSyntaxError("duplicated 'u' flag");
-          }
-          flagSet.unicode = true;
-          break;
         case 's':
           if (flagSet.dotAll) {
             throw new RegExpSyntaxError("duplicated 's' flag");
           }
           flagSet.dotAll = true;
+          break;
+        case 'u':
+          if (flagSet.unicode) {
+            throw new RegExpSyntaxError("duplicated 'u' flag");
+          }
+          flagSet.unicode = true;
           break;
         case 'y':
           if (flagSet.sticky) {

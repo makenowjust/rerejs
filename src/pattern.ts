@@ -15,8 +15,8 @@ export type FlagSet = {
   global: boolean;
   ignoreCase: boolean;
   multiline: boolean;
-  unicode: boolean;
   dotAll: boolean;
+  unicode: boolean;
   sticky: boolean;
 };
 
@@ -348,11 +348,11 @@ export const flagSetToString = (set: FlagSet): string => {
   if (set.multiline) {
     s += 'm';
   }
-  if (set.unicode) {
-    s += 'u';
-  }
   if (set.dotAll) {
     s += 's';
+  }
+  if (set.unicode) {
+    s += 'u';
   }
   if (set.sticky) {
     s += 'y';
