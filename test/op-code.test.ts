@@ -7,7 +7,7 @@ test('codesToString', t => {
   s += '#000: push         5\n';
   s += "#001: char         'a'\n";
   s += '#002: dec          \n';
-  s += '#003: loop         #001\n';
+  s += '#003: loop         #002\n';
   s += '#004: pop          \n';
   s += '#005: push         5\n';
   s += '#006: fork_next    #013\n';
@@ -16,7 +16,7 @@ test('codesToString', t => {
   s += "#009: char         'b'\n";
   s += '#010: empty_check  \n';
   s += '#011: dec          \n';
-  s += '#012: loop         #006\n';
+  s += '#012: loop         #007\n';
   s += '#013: pop          \n';
   s += '#014: match        ';
 
