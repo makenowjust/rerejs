@@ -4,6 +4,8 @@
   <b>Re</b>-implementation of ECMA-262 (JavaScript) <code><b>R</b>eg<b>E</b>xp</code>.
 </p>
 
+![](https://github.com/MakeNowJust/rerejs/workflows/test/badge.svg)
+
 ## About
 
 ReRE.js is a framework for processing [ECMA-262][] (JavaScript standard) `RegExp`.
