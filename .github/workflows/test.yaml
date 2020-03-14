@@ -1,0 +1,15 @@
+name: test
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '13.x'
+    - run: yarn install
+    - run: yarn lint
+    - run: yarn type-check
+    - run: yarn test
