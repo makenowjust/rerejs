@@ -2,5 +2,6 @@ node_modules
 yarn-error.log
 .nyc_output
 coverage
+coverage.lcov
 out
 lib

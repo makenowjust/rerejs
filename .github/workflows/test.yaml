@@ -12,4 +12,7 @@ jobs:
     - run: yarn install
     - run: yarn lint
     - run: yarn type-check
-    - run: yarn test
+    - run: yarn ci
+    - run: yarn codecov
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -16,9 +16,10 @@
   ],
   "scripts": {
     "bundle": "rollup -c",
+    "ci": "nyc yarn test && nyc report --reporter=text-lcov > coverage.lcov",
     "lint": "eslint './**/*.ts'",
     "make": "sucrase-node ./tools/make.ts",
-    "test": "nyc ava",
+    "test": "ava",
     "type-check": "tsc -p ."
   },
   "devDependencies": {
@@ -30,6 +31,7 @@
     "@typescript-eslint/eslint-plugin": "2.22.0",
     "@typescript-eslint/parser": "2.22.0",
     "ava": "3.5.0",
+    "codecov": "3.6.5",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.10.0",
     "eslint-plugin-import": "2.20.1",
