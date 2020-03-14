@@ -14,5 +14,5 @@ jobs:
     - run: yarn type-check
     - run: yarn ci
     - run: yarn codecov
-      with:
+      env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
