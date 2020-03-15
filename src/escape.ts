@@ -21,6 +21,10 @@ export const escape = (c: number, inCharClass = false): string => {
   }
 
   if (inCharClass) {
+    // In char class, we can use `'\b'` escape.
+    if (c === 0x08) {
+      return '\\b';
+    }
     // In char class, `'-'` must be escaped.
     if (c === 0x2d) {
       return '\\-';
