@@ -141,6 +141,7 @@ Notably, it is out of targets of this project that extending `RegExp` syntax.
 
 There are few documents for now. Sorry.
 
+- [docs/canonicalize.md](docs/canonicalize.md): the explanation of `src/canonicalize.ts`.
 - [docs/vm.md](docs/vm.md): the explanation for the VM using ReRE.js on matching.
 
 ## License
