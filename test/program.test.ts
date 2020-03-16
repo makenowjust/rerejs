@@ -70,6 +70,12 @@ const testCases: TestCase[] = [
     unmatches: ['SS']
   },
   {
+    source: 'ſ',
+    flags: 'i',
+    matches: ['ſ'],
+    unmatches: ['s', 'S']
+  },
+  {
     source: 'a*',
     flags: '',
     matches: ['', 'a', 'aa'],
@@ -182,6 +188,24 @@ const testCases: TestCase[] = [
     flags: '',
     matches: ['\uD800'],
     unmatches: ['\u{10000}']
+  },
+  {
+    source: '[a-z]',
+    flags: 'i',
+    matches: ['a', 'z', 'A', 'Z'],
+    unmatches: ['ſ']
+  },
+  {
+    source: '[ǳ]',
+    flags: 'i',
+    matches: ['ǳ', 'ǲ', 'Ǳ'],
+    unmatches: ['DZ']
+  },
+  {
+    source: '[ǳ]',
+    flags: 'iu',
+    matches: ['ǳ', 'ǲ', 'Ǳ'],
+    unmatches: ['DZ']
   },
   {
     source: '^abc$',
