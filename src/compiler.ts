@@ -173,9 +173,9 @@ export class Compiler {
       throw new Error('BUG: invalid pattern');
     }
     return [
-      { op: 'cap_begin', index: node.index },
+      { op: this.direction === 'backward' ? 'cap_end' : 'cap_begin', index: node.index },
       ...codes0,
-      { op: 'cap_end', index: node.index }
+      { op: this.direction === 'backward' ? 'cap_begin' : 'cap_end', index: node.index }
     ];
   }
 
@@ -315,7 +315,7 @@ export class Compiler {
       return [
         { op: 'push_pos' },
         { op: 'push_proc' },
-        { op: 'fork_next', next: codes0.length + 3 },
+        { op: 'fork_cont', next: codes0.length + 2 },
         ...codes0,
         { op: 'rewind_proc' },
         { op: 'fail' },
