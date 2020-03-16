@@ -146,14 +146,20 @@ export class Compiler {
   }
 
   private compileSequence(node: Sequence): OpCode[] {
+    const children = Array.from(node.children);
+    if (this.direction === 'backward') {
+      children.reverse();
+    }
+
     const codes: OpCode[] = [];
     let advance = false;
-    for (const child of node.children) {
+    for (const child of children) {
       const codes0 = this.compileNode(child);
       codes.push(...codes0);
       advance = advance || this.advance;
     }
     this.advance = advance;
+
     return codes;
   }
 
