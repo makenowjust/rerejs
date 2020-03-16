@@ -4,8 +4,9 @@
   <b>Re</b>-implementation of ECMA-262 (JavaScript) <code><b>R</b>eg<b>E</b>xp</code>.
 </p>
 
-[![](https://github.com/MakeNowJust/rerejs/workflows/test/badge.svg)](https://github.com/MakeNowJust/rerejs/actions)
 [![codecov](https://codecov.io/gh/MakeNowJust/rerejs/branch/master/graph/badge.svg)](https://codecov.io/gh/MakeNowJust/rerejs)
+[![GitHub Actions status](https://github.com/MakeNowJust/rerejs/workflows/test/badge.svg)](https://github.com/MakeNowJust/rerejs/actions)
+[![NPM version](https://img.shields.io/npm/v/rerejs)](https://www.npmjs.com/package/rerejs)
 
 ## About
 
