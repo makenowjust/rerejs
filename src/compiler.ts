@@ -244,22 +244,29 @@ export class Compiler {
     if (node.max === Infinity) {
       const codes1 = this.insertCapReset(from, this.insertEmptyCheck(codes0));
       codes.push(
-        { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes0.length + 1 },
+        { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes1.length + 1 },
         ...codes1,
-        { op: 'jump', cont: -1 - codes0.length - 1 }
+        { op: 'jump', cont: -1 - codes1.length - 1 }
       );
     } else if (node.max > node.min) {
       const remain = node.max - node.min;
       const codes1 = this.insertCapReset(from, this.insertEmptyCheck(codes0));
-      codes.push(
-        { op: 'push', value: remain },
-        { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes0.length + 3 },
-        ...codes1,
-        { op: 'dec' },
-        { op: 'loop', cont: -1 - codes0.length - 2 },
-        { op: 'fail' },
-        { op: 'pop' }
-      );
+      if (remain === 1) {
+        codes.push(
+          { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes1.length },
+          ...codes1
+        );
+      } else {
+        codes.push(
+          { op: 'push', value: remain + 1 },
+          { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes0.length + 4 },
+          ...codes1,
+          { op: 'dec' },
+          { op: 'loop', cont: -1 - codes0.length - 2 },
+          { op: 'fail' },
+          { op: 'pop' }
+        );
+      }
     }
 
     return codes;
