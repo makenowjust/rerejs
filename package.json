@@ -19,6 +19,7 @@
     "ci": "yarn test && nyc report --reporter=text-lcov > coverage.lcov",
     "lint": "eslint './**/*.ts'",
     "make": "sucrase-node ./tools/make.ts",
+    "prepack": "yarn type-check && yarn bundle",
     "test": "nyc ava",
     "type-check": "tsc -p ."
   },
