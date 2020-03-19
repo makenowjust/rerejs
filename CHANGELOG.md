@@ -1,3 +1,11 @@
+# v0.1.2 (2020-03-19)
+
+Fixes:
+
+  - Allow calling `RegExpCompat` without `new`.
+  - Fix `RegExpCompat#split` correctly.
+  - Fix `RegExpCompat#replace` replacer pattern like `$11` for working `$1` and `1` also.
+
 # v0.1.1 (2020-03-16)
 
 Changes:
