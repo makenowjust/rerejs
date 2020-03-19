@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 // TODO: respect the specification more (e.g. throw `TypeError` if `this` is not `RegExp`).
+// TODO: add `source` escape support.
 // TODO: add `matchAll` support.
 
 import { Compiler } from './compiler';
@@ -27,101 +28,28 @@ const advance = (s: string, i: number, unicode: boolean): number => {
   return i + 1;
 };
 
-class RegExpCompat implements RegExp {
-  public static get $1(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
+export const RegExpCompat = ((): typeof RegExp => {
+  interface RegExpCompat extends RegExp {
+    source: string;
+    pattern: Pattern;
+    program: Program;
   }
 
-  public static get $2(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
-  }
-
-  public static get $3(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
-  }
-
-  public static get $4(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
-  }
-
-  public static get $5(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
-  }
-
-  public static get $6(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
-  }
-
-  public static get $7(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
-  }
-
-  public static get $8(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
-  }
-
-  public static get $9(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.$N methods');
-  }
-
-  public static get lastMatch(): string {
-    throw new Error('RegExpCompat does not support old-style RegExp.lastMatch');
-  }
-
-  public static [Symbol.species] = RegExpCompat;
-
-  public readonly source!: string;
-
-  public lastIndex = 0;
-
-  private pattern!: Pattern;
-  private program!: Program;
-
-  public get flags(): string {
-    return flagSetToString(this.pattern.flagSet);
-  }
-
-  public get global(): boolean {
-    return this.pattern.flagSet.global;
-  }
-
-  public get ignoreCase(): boolean {
-    return this.pattern.flagSet.ignoreCase;
-  }
-
-  public get multiline(): boolean {
-    return this.pattern.flagSet.multiline;
-  }
-
-  public get dotAll(): boolean {
-    return this.pattern.flagSet.dotAll;
-  }
-
-  public get unicode(): boolean {
-    return this.pattern.flagSet.unicode;
-  }
-
-  public get sticky(): boolean {
-    return this.pattern.flagSet.sticky;
-  }
-
-  constructor(pattern: RegExp | string);
-  constructor(pattern: string, flags?: string);
-  constructor(source: any, flags?: string) {
+  const klass = function RegExpCompat(this: RegExpCompat, source: any, flags?: string): RegExp {
     if (new.target === undefined) {
       if (isRegExp(source) && flags === undefined) {
         if (source.constructor === RegExpCompat) {
           return source;
         }
       }
-      return new RegExpCompat(source, flags);
+      return new (klass as any)(source, flags);
     }
 
     if (source instanceof RegExp || source instanceof RegExpCompat) {
-      source = source.source;
       if (flags === undefined) {
-        flags = source.flags;
+        flags = (source as RegExp).flags;
       }
+      source = (source as RegExp).source;
     }
 
     this.source = String(source);
@@ -130,9 +58,45 @@ class RegExpCompat implements RegExp {
     this.pattern = parser.parse();
     const compiler = new Compiler(this.pattern);
     this.program = compiler.compile();
+    return this;
+  };
+
+  for (const name of ['$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8', '$9', 'lastMatch']) {
+    Object.defineProperty(klass, name, {
+      get(): any {
+        throw new Error(`RegExpCompat does not support old RegExp.${name} method`);
+      }
+    });
   }
 
-  public exec(string: string): RegExpExecArray | null {
+  klass[Symbol.species] = klass;
+
+  Object.defineProperty(klass.prototype, 'flags', {
+    get(this: RegExpCompat): string {
+      return flagSetToString(this.pattern.flagSet);
+    }
+  });
+
+  for (const flag of [
+    'global',
+    'ignoreCase',
+    'multiline',
+    'dotAll',
+    'unicode',
+    'sticky'
+  ] as const) {
+    Object.defineProperty(klass.prototype, flag, {
+      get(this: RegExpCompat): boolean {
+        return this.pattern.flagSet[flag];
+      }
+    });
+  }
+
+  klass.prototype.compile = function compile(this: RegExpCompat): RegExpCompat {
+    return this;
+  };
+
+  klass.prototype.exec = function exec(this: RegExpCompat, string: string): RegExpExecArray | null {
     const update = this.global || this.sticky;
 
     let pos = 0;
@@ -145,17 +109,16 @@ class RegExpCompat implements RegExp {
     }
 
     return match?.toArray() ?? null;
-  }
+  };
 
-  public test(string: string): boolean {
+  klass.prototype.test = function test(this: RegExpCompat, string: string): boolean {
     return !!this.exec(string);
-  }
+  };
 
-  public compile(): this {
-    return this;
-  }
-
-  public [Symbol.match](string: string): RegExpMatchArray | null {
+  klass.prototype[Symbol.match] = function match(
+    this: RegExpCompat,
+    string: string
+  ): RegExpMatchArray | null {
     if (this.global) {
       this.lastIndex = 0;
       const result: string[] = [];
@@ -173,9 +136,10 @@ class RegExpCompat implements RegExp {
       return result.length === 0 ? null : result;
     }
     return this.exec(string);
-  }
+  };
 
-  public [Symbol.replace](
+  klass.prototype[Symbol.replace] = function replace(
+    this: RegExpCompat,
     string: string,
     replacer: string | ((substring: string, ...args: any[]) => string)
   ): string {
@@ -208,7 +172,7 @@ class RegExpCompat implements RegExp {
       result += string.slice(pos, match.index);
       pos = match.index! + match[0].length;
       if (typeof replacer === 'function') {
-        const args: [string, ...any[]] = [match[0], ...match.slice(1), match.index] as any;
+        const args: [string, ...any[]] = [match[0], ...match.slice(1), match.index, string] as any;
         if (match.groups) {
           args.push(match.groups);
         }
@@ -255,10 +219,16 @@ class RegExpCompat implements RegExp {
               if ('0' <= c && c <= '9') {
                 const d = replacer[j + 2];
                 const s = '0' <= d && d <= '9' ? c + d : c;
-                const n = Number.parseInt(s, 10);
+                let n = Number.parseInt(s, 10);
                 if (0 < n && n < match.length) {
                   result += match[n] ?? '';
                   i = j + 1 + s.length;
+                  break;
+                }
+                n = Math.floor(n / 10);
+                if (0 < n && n < match.length) {
+                  result += match[n] ?? '';
+                  i = j + s.length;
                   break;
                 }
               }
@@ -273,17 +243,21 @@ class RegExpCompat implements RegExp {
 
     result += string.slice(pos);
     return result;
-  }
+  };
 
-  public [Symbol.search](string: string): number {
+  klass.prototype[Symbol.search] = function search(this: RegExpCompat, string: string): number {
     const prevLastIndex = this.lastIndex;
     this.lastIndex = 0;
     const m = this.exec(string);
     this.lastIndex = prevLastIndex;
     return (m && m.index) ?? -1;
-  }
+  };
 
-  public [Symbol.split](string: string, limit?: number): string[] {
+  klass.prototype[Symbol.split] = function split(
+    this: RegExpCompat,
+    string: string,
+    limit?: number
+  ): string[] {
     const flags = this.sticky ? this.flags : this.flags + 'y';
     const splitter = new RegExpCompat(this.source, flags);
     limit = (limit ?? 2 ** 32 - 1) >>> 0;
@@ -320,27 +294,24 @@ class RegExpCompat implements RegExp {
 
       const t = string.slice(p, q);
       result.push(t);
-      if (limit === t.length) {
+      if (limit === result.length) {
         return result;
       }
       p = e;
       for (let i = 1; i < match.length; i++) {
         result.push(match[i]);
-        if (limit === t.length) {
+        if (limit === result.length) {
           return result;
         }
       }
+
+      q = p;
     }
 
     const t = string.slice(p);
     result.push(t);
     return result;
-  }
-}
+  };
 
-// Make `RegExpCompat` as `global.RegExp` assinable.
-// It is hard because `class` cannot implement call signatures,
-// however `typeof RegExp` has call signatures.
-// So this hack is needed.
-const _RegExpCompat: typeof RegExp = RegExpCompat as any;
-export { _RegExpCompat as RegExpCompat };
+  return klass as any;
+})();
