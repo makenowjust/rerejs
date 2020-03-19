@@ -1,6 +1,6 @@
 {
   "name": "rerejs",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Re-implementation of ECMA-262 (JavaScript) RegExp",
   "author": "TSUYUSATO Kitsune <make.just.on@gmail.com>",
   "bugs": "https://github.com/MakeNowJust/rerejs/issues",
