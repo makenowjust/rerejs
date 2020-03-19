@@ -16,10 +16,10 @@
   ],
   "scripts": {
     "bundle": "rollup -c",
-    "ci": "nyc yarn test && nyc report --reporter=text-lcov > coverage.lcov",
+    "ci": "yarn test && nyc report --reporter=text-lcov > coverage.lcov",
     "lint": "eslint './**/*.ts'",
     "make": "sucrase-node ./tools/make.ts",
-    "test": "ava",
+    "test": "nyc ava",
     "type-check": "tsc -p ."
   },
   "devDependencies": {
