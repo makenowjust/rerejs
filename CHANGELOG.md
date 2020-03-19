@@ -1,4 +1,4 @@
-# v0.1.3
+# v0.1.3 (2020-03-19)
 
 I mistook publishing `v0.1.2`.
 This version is quick fix to this.
