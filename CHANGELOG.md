@@ -1,9 +1,9 @@
-# dev
+# v0.1.4 (2020-03-23)
 
 Changes:
 
   - Keep the source string through `patternToString(new Parser(source).parse)`.
-  - Add `RegExpCompat#toString`
+  - Add `RegExpCompat#toString`.
 
 Fixes:
 
