@@ -3,10 +3,12 @@
 Changes:
 
   - Keep the source string through `patternToString(new Parser(source).parse)`.
+  - Add `RegExpCompat#toString`
 
 Fixes:
 
   - Recognize `\u2029` as line terminator character on matching.
+  - Use `nodeToString` to get `RegExpCompat#source` string.
 
 # v0.1.3 (2020-03-19)
 
