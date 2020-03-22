@@ -8,18 +8,18 @@ const main = {
   output: [
     {
       file: 'lib/index.js',
-      format: 'cjs'
-    }
+      format: 'cjs',
+    },
   ],
   external: ['util'],
   plugins: [
     sucrase({
       exclude: ['node_modules/**'],
-      transforms: ['typescript']
+      transforms: ['typescript'],
     }),
     commonjs(),
-    resolve({ preferBuiltins: true })
-  ]
+    resolve({ preferBuiltins: true }),
+  ],
 };
 
 const types = {
@@ -27,11 +27,11 @@ const types = {
   output: [
     {
       file: 'lib/index.d.ts',
-      format: 'esm'
-    }
+      format: 'esm',
+    },
   ],
   external: ['util'],
-  plugins: [dts()]
+  plugins: [dts()],
 };
 
 export default [main, types];

@@ -17,7 +17,7 @@
   "scripts": {
     "bundle": "rollup -c",
     "ci": "yarn test && nyc report --reporter=text-lcov > coverage.lcov",
-    "lint": "eslint './**/*.ts'",
+    "lint": "eslint '*.js' './**/*.ts'",
     "make": "sucrase-node ./tools/make.ts",
     "prepack": "yarn type-check && yarn bundle",
     "test": "nyc ava",
