@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { codesToString } from '../src/op-code';
 
-test('codesToString', t => {
+test('codesToString', (t) => {
   let s = '';
   s += '#000: push         5\n';
   s += "#001: char         'a'\n";
@@ -37,7 +37,7 @@ test('codesToString', t => {
       { op: 'dec' },
       { op: 'loop', cont: -6 },
       { op: 'pop' },
-      { op: 'match' }
+      { op: 'match' },
     ]),
     s
   );

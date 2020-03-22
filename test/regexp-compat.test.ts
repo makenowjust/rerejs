@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { RegExpCompat } from '../src/regexp-compat';
 
-test('legacy methods', t => {
+test('legacy methods', (t) => {
   t.throws(() => RegExpCompat.$1);
   t.throws(() => RegExpCompat.$2);
   t.throws(() => RegExpCompat.$3);
@@ -18,7 +18,7 @@ test('legacy methods', t => {
   t.is(re.compile(), re);
 });
 
-test('constructor', t => {
+test('constructor', (t) => {
   const r0 = new RegExpCompat('a');
   t.is(r0.source, 'a');
   t.is(r0.flags, '');
@@ -60,57 +60,57 @@ const testCases: TestCase[] = [
   {
     source: '',
     flags: '',
-    strings: ['', 'a']
+    strings: ['', 'a'],
   },
   {
     source: '.',
     flags: 'g',
-    strings: ['', 'a', '\ud800\udc00']
+    strings: ['', 'a', '\ud800\udc00'],
   },
   {
     source: '.',
     flags: 'ug',
-    strings: ['', 'a', '\ud800\udc00']
+    strings: ['', 'a', '\ud800\udc00'],
   },
   {
     source: 'a',
     flags: 'ug',
-    strings: ['', 'a', 'abcd', '\ud800\udc00', '\ud800']
+    strings: ['', 'a', 'abcd', '\ud800\udc00', '\ud800'],
   },
   {
     source: 'a*',
     flags: 'g',
-    strings: ['bb', 'aba', 'bbbab', 'babaab']
+    strings: ['bb', 'aba', 'bbbab', 'babaab'],
   },
   {
     source: 'a*',
     flags: 'gy',
-    strings: ['bb', 'aba', 'bbbab', 'babaab']
+    strings: ['bb', 'aba', 'bbbab', 'babaab'],
   },
   {
     source: '$',
     flags: 'm',
-    strings: ['abc', 'abc\n']
+    strings: ['abc', 'abc\n'],
   },
   {
     source: '(a)|(bb)',
     flags: '',
-    strings: ['a', 'bb', 'bab', 'bba']
+    strings: ['a', 'bb', 'bab', 'bba'],
   },
   {
     source: '(?:(?<a>a)|(?<b>bb))*',
     flags: '',
-    strings: ['a', 'bb', 'bab', 'bba', 'abb']
+    strings: ['a', 'bb', 'bab', 'bba', 'abb'],
   },
   {
     source: 'a|bb',
     flags: 'y',
-    strings: ['a', 'bb', 'bab']
-  }
+    strings: ['a', 'bb', 'bab'],
+  },
 ];
 
 for (const testCase of testCases) {
-  test(`compat /${testCase.source}/${testCase.flags}`, t => {
+  test(`compat /${testCase.source}/${testCase.flags}`, (t) => {
     const r0 = new RegExp(testCase.source, testCase.flags);
     const r1 = new RegExpCompat(testCase.source, testCase.flags);
 
@@ -166,85 +166,85 @@ const replaceTestCases: ReplaceTestCase[] = [
     source: ' ',
     flags: '',
     string: 'hello world',
-    replacer: 'xxx'
+    replacer: 'xxx',
   },
   {
     source: ' ',
     flags: 'g',
     string: ' hello world ',
-    replacer: 'xxx'
+    replacer: 'xxx',
   },
   {
     source: '',
     flags: 'g',
     string: 'hello world',
-    replacer: 'x'
+    replacer: 'x',
   },
   {
     source: 'x',
     flags: 'y',
     string: 'xxx',
-    replacer: 'a'
+    replacer: 'a',
   },
   {
     source: 'x',
     flags: 'y',
     string: 'axx',
-    replacer: 'a'
+    replacer: 'a',
   },
   {
     source: ' ',
     flags: 'g',
     string: ' hello world ',
-    replacer: '$'
+    replacer: '$',
   },
   {
     source: ' ',
     flags: 'g',
     string: ' hello world ',
-    replacer: '$$'
+    replacer: '$$',
   },
   {
     source: ' ',
     flags: 'g',
     string: ' hello world ',
-    replacer: '$0'
+    replacer: '$0',
   },
   {
     source: ' ',
     flags: 'g',
     string: ' hello world ',
-    replacer: '$<x>'
+    replacer: '$<x>',
   },
   {
     source: ' ',
     flags: 'g',
     string: ' hello world ',
-    replacer: "$`$&$'"
+    replacer: "$`$&$'",
   },
   {
     source: '([l])\\1',
     flags: 'g',
     string: 'hello world',
-    replacer: '$&$1$2'
+    replacer: '$&$1$2',
   },
   {
     source: '()'.repeat(9) + '([l])\\10',
     flags: 'g',
     string: 'hello world',
-    replacer: '$&$10$11'
+    replacer: '$&$10$11',
   },
   {
     source: '(?<l>[l])',
     flags: 'g',
     string: 'hello world',
-    replacer: '$<x>$<l>'
-  }
+    replacer: '$<x>$<l>',
+  },
 ];
 
 for (const testCase of replaceTestCases) {
   const { source, flags, string, replacer } = testCase;
-  test(`replace /${source}/${flags} against ${JSON.stringify(string)} by ${replacer}`, t => {
+  test(`replace /${source}/${flags} against ${JSON.stringify(string)} by ${replacer}`, (t) => {
     const r0 = new RegExp(source, flags);
     const r1 = new RegExpCompat(source, flags);
 

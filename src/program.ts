@@ -159,9 +159,7 @@ export class Program {
 
   public toString(): string {
     let s = '';
-    const codes = codesToString(this.codes)
-      .split('\n')
-      .join('\n    ');
+    const codes = codesToString(this.codes).split('\n').join('\n    ');
     s += 'Program {\n';
     s += `  pattern: ${patternToString(this.pattern)},\n`;
     s += '  codes:\n';
@@ -175,7 +173,7 @@ export class Program {
     const pattern = options.stylize(patternToString(this.pattern), 'regexp');
     const codes = codesToString(this.codes)
       .split('\n')
-      .map(line => options.stylize(line, 'string'))
+      .map((line) => options.stylize(line, 'string'))
       .join('\n    ');
     s += `${options.stylize('Program', 'special')} {\n`;
     s += `  pattern: ${pattern},\n`;

@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { loadProperty, loadPropertyValue } from '../src/unicode';
 
-test('loadProperty', t => {
+test('loadProperty', (t) => {
   const ascii = loadProperty('ASCII');
   t.true(ascii && ascii.has(0x41));
 
@@ -13,7 +13,7 @@ test('loadProperty', t => {
   t.is(unknown, null);
 });
 
-test('loadPropertyValue', t => {
+test('loadPropertyValue', (t) => {
   const zs = loadPropertyValue('General_Category', 'Zs');
   t.true(zs && zs.has(0x20));
 

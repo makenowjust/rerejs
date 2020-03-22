@@ -65,7 +65,7 @@ export const RegExpCompat = ((): typeof RegExp => {
     Object.defineProperty(klass, name, {
       get(): any {
         throw new Error(`RegExpCompat does not support old RegExp.${name} method`);
-      }
+      },
     });
   }
 
@@ -74,7 +74,7 @@ export const RegExpCompat = ((): typeof RegExp => {
   Object.defineProperty(klass.prototype, 'flags', {
     get(this: RegExpCompat): string {
       return flagSetToString(this.pattern.flagSet);
-    }
+    },
   });
 
   for (const flag of [
@@ -83,12 +83,12 @@ export const RegExpCompat = ((): typeof RegExp => {
     'multiline',
     'dotAll',
     'unicode',
-    'sticky'
+    'sticky',
   ] as const) {
     Object.defineProperty(klass.prototype, flag, {
       get(this: RegExpCompat): boolean {
         return this.pattern.flagSet[flag];
-      }
+      },
     });
   }
 

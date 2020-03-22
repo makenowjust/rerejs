@@ -22,402 +22,402 @@ type TestCase =
 const testCases: TestCase[] = [
   {
     source: '',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: 'a',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: 'a|b|c',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: 'abc',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: 'a*a+a?a{1}a{1,}a{1,2}a*?a+?a??a{1}?a{1,}?a{1,2}?',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\b*`,
-    result: 'error'
+    result: 'error',
   },
   {
     source: '(?=)*',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '*',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '+',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '?',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '{',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '{1,2}',
-    result: 'error'
+    result: 'error',
   },
   {
     source: 'a{1',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: 'a{1,b',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: 'a{2,1}',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '}',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '[]',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: '[^]',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: '[-]',
     result: 'ok',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '[a-]',
     result: 'ok',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '[-z]',
     result: 'ok',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '[a-zA-Z0-9_]',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: '[z-a]',
-    result: 'error'
+    result: 'error',
   },
   {
     source: String.raw`[\b]`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`[\--\-]`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`[\u1234]`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`[\a]`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`[\w\d]`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`[\w-\d]`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`[w-\w]`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '[',
-    result: 'error'
+    result: 'error',
   },
   {
     source: ']',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '|',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: '.^$',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: '\\',
-    result: 'error'
+    result: 'error',
   },
   {
     source: String.raw`\d\D\w\W\s\S`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\p{Lu}\P{Lu}`,
     result: 'ok',
     unicode: 'diff',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\p{sc=Hira}\P{sc=Hira}`,
     result: 'ok',
     unicode: 'diff',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\p{}`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\p{sc=}`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\p{sc|`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\p{sc=Hira|`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\p`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\b\B`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\0`,
     result: 'ok',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\1`,
     result: 'ok',
     unicode: 'diff',
     strict: 'diff',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`()\1`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\1()`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\01`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\012\43`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\k<abc>`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`(?<abc>)\k`,
-    result: 'error'
+    result: 'error',
   },
   {
     source: String.raw`(?<abc>)\k<abc>`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\k<abc>(?<abc>)`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\t\n\v\f\r\\\/\^\$\.\[\]\(\)\{\}\*\+\?\|`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\%`,
     result: 'ok',
     unicode: 'error',
     strict: 'same',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\cA\ca`,
     result: 'ok',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\c`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\x11`,
     result: 'ok',
-    patternToString: true
+    patternToString: true,
   },
   {
     source: '\\x',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\u1234`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\uD800\uDC00`,
     result: 'ok',
     unicode: 'diff',
     strict: 'same',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\ud800 \udc00`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\ud800\u1234`,
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: String.raw`\ud800\u{DC00}`,
     result: 'ok',
     unicode: 'diff',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: String.raw`\u{10000}`,
     result: 'ok',
     unicode: 'diff',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '\\u{}',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '\\u{FFFFFF}',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false
+    patternToString: false,
   },
   {
     source: '()(?:)(?<foo>)(?=)(?!)(?<=)(?<!)',
-    result: 'ok'
+    result: 'ok',
   },
   {
     source: '(',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '(?:',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '(?<abc>',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '(?=',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '(?!',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '(?<=',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '(?<!',
-    result: 'error'
+    result: 'error',
   },
   {
     source: '(?%',
-    result: 'error'
-  }
+    result: 'error',
+  },
 ];
 
 const parse = (source: string, flags: string, additional: boolean): Pattern => {
@@ -426,7 +426,7 @@ const parse = (source: string, flags: string, additional: boolean): Pattern => {
 };
 
 for (const testCase of testCases) {
-  test(`parse ${JSON.stringify(testCase.source)}`, t => {
+  test(`parse ${JSON.stringify(testCase.source)}`, (t) => {
     switch (testCase.result) {
       case 'ok': {
         const pattern0 = parse(testCase.source, '', true);
@@ -501,20 +501,20 @@ for (const testCase of testCases) {
   });
 }
 
-test('flags', t => {
+test('flags', (t) => {
   t.deepEqual(parse('', 'gimsuy', true).flagSet, {
     global: true,
     ignoreCase: true,
     multiline: true,
     unicode: true,
     dotAll: true,
-    sticky: true
+    sticky: true,
   });
 
   for (const c of 'gimsuy') {
     t.throws(() => parse('', c.repeat(2), true), {
       instanceOf: RegExpSyntaxError,
-      message: /duplicated/
+      message: /duplicated/,
     });
   }
 

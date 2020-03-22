@@ -153,7 +153,7 @@ export const SCRIPT = [
   'Vaii',
   'Wara',
   'Yiii',
-  'Zanb'
+  'Zanb',
   // 'Zzzz' (alias for 'Unknown') is commented out because it is not listed in the table.
   // However V8 accepts this... (e.g. `/\p{Script=Zzzz}/u.exec('\uFFFF')` matches.)
 ];

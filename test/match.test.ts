@@ -4,7 +4,7 @@ import test from 'ava';
 
 import { Match } from '../src/match';
 
-test('getters', t => {
+test('getters', (t) => {
   const m = new Match('test', [0, 4, -1, -1, 1, 3], new Map([['x', 2]]));
   t.is(m.input, 'test');
   t.is(m.index, 0);
@@ -26,7 +26,7 @@ test('getters', t => {
   t.is(m.end('x'), 3);
 });
 
-test('toArray', t => {
+test('toArray', (t) => {
   const m = new Match('test', [0, 4, -1, -1, 1, 3], new Map([['x', 2]]));
   const a = m.toArray();
 
@@ -42,12 +42,12 @@ test('toArray', t => {
   t.deepEqual(a, b);
 });
 
-test('toString', t => {
+test('toString', (t) => {
   const m = new Match('test', [0, 4, -1, -1, 1, 3], new Map([['x', 2]]));
   t.is(m.toString(), 'Match["test", undefined, "es"]');
 });
 
-test('util.inspect.custom', t => {
+test('util.inspect.custom', (t) => {
   const m = new Match('test', [0, 4, -1, -1, 1, 3], new Map([['x', 2]]));
   let s = '';
   s += 'Match [\n';

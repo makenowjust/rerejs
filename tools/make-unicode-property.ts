@@ -58,7 +58,7 @@ export const PROPERTY = [
   'VS',
   'space',
   'XIDC',
-  'XIDS'
+  'XIDS',
 ];
 
 export const makePropertyData = (name: string): string => {
