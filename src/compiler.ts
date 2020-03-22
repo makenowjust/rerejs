@@ -7,7 +7,7 @@ import {
   unicodeWord,
   invertUnicodeWord,
   space,
-  invertSpace
+  invertSpace,
 } from './char-class';
 import { CharSet } from './char-set';
 import { RegExpSyntaxError } from './error';
@@ -34,7 +34,7 @@ import {
   Class,
   Dot,
   BackRef,
-  NamedBackRef
+  NamedBackRef,
 } from './pattern';
 import { Program } from './program';
 import { loadProperty, loadPropertyValue } from './unicode';
@@ -74,7 +74,7 @@ export class Compiler {
       { op: 'cap_begin', index: 0 },
       ...codes0,
       { op: 'cap_end', index: 0 },
-      { op: 'match' }
+      { op: 'match' },
     ];
     return new Program(this.pattern, codes1);
   }
@@ -141,7 +141,7 @@ export class Compiler {
       { op: 'fork_cont', next: codes0.length + 1 },
       ...codes0,
       { op: 'jump', cont: codes.length },
-      ...codes
+      ...codes,
     ]);
   }
 
@@ -175,7 +175,7 @@ export class Compiler {
     return [
       { op: this.direction === 'backward' ? 'cap_end' : 'cap_begin', index: node.index },
       ...codes0,
-      { op: this.direction === 'backward' ? 'cap_begin' : 'cap_end', index: node.index }
+      { op: this.direction === 'backward' ? 'cap_begin' : 'cap_end', index: node.index },
     ];
   }
 
@@ -197,7 +197,7 @@ export class Compiler {
     return [
       { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes1.length + 1 },
       ...codes1,
-      { op: 'jump', cont: -1 - codes1.length - 1 }
+      { op: 'jump', cont: -1 - codes1.length - 1 },
     ];
   }
 
@@ -210,7 +210,7 @@ export class Compiler {
       ...codes0,
       { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes1.length + 1 },
       ...codes1,
-      { op: 'jump', cont: -1 - codes1.length - 1 }
+      { op: 'jump', cont: -1 - codes1.length - 1 },
     ];
   }
 
@@ -327,7 +327,7 @@ export class Compiler {
         { op: 'rewind_proc' },
         { op: 'fail' },
         { op: 'pop' },
-        { op: 'restore_pos' }
+        { op: 'restore_pos' },
       ];
     }
 
@@ -336,7 +336,7 @@ export class Compiler {
       { op: 'push_proc' },
       ...codes0,
       { op: 'rewind_proc' },
-      { op: 'restore_pos' }
+      { op: 'restore_pos' },
     ];
   }
 

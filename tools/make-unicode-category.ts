@@ -43,7 +43,7 @@ export const CATEGORY = [
   'S',
   'Lt',
   'Cn',
-  'Lu'
+  'Lu',
 ];
 
 export const makeCategoryData = (name: string): string => {

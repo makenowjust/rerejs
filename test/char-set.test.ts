@@ -4,7 +4,7 @@ import test from 'ava';
 
 import { CharSet } from '../src/char-set';
 
-test('simple', t => {
+test('simple', (t) => {
   const set = new CharSet();
   set.add(10, 20);
 
@@ -13,7 +13,7 @@ test('simple', t => {
   t.false(set.has(20), 'not have end value');
 });
 
-test('add', t => {
+test('add', (t) => {
   const set = new CharSet();
   // Adds two ranges.
   set.add(10, 20);
@@ -42,7 +42,7 @@ test('add', t => {
   t.deepEqual(set.data, [0, 50]);
 });
 
-test('addCharSet', t => {
+test('addCharSet', (t) => {
   const set1 = new CharSet();
   set1.add(10, 20);
   const set2 = new CharSet();
@@ -51,7 +51,7 @@ test('addCharSet', t => {
   t.deepEqual(set1.data, [10, 30]);
 });
 
-test('clone', t => {
+test('clone', (t) => {
   const set1 = new CharSet();
   set1.add(10, 20);
   const set2 = set1.clone();
@@ -60,7 +60,7 @@ test('clone', t => {
   t.deepEqual(set2.data, [10, 30]);
 });
 
-test('invert', t => {
+test('invert', (t) => {
   // Invert a set.
   const set1 = new CharSet();
   set1.add(10, 20);
@@ -83,7 +83,7 @@ test('invert', t => {
   t.true(set4.has(0));
 });
 
-test('toRegExpPattern', t => {
+test('toRegExpPattern', (t) => {
   const word = new CharSet();
   word.add(0x61, 0x7a + 1); // a-z
   word.add(0x41, 0x5a + 1); // A-Z
@@ -94,14 +94,14 @@ test('toRegExpPattern', t => {
   t.is(word.toRegExpPattern(true), '[^A-Z_a-z]');
 });
 
-test('toString', t => {
+test('toString', (t) => {
   const set = new CharSet();
   set.add(0x61, 0x7a + 1); // a-z
 
   t.is(set.toString(), 'CharSet[a-z]');
 });
 
-test('util.inspect.custom', t => {
+test('util.inspect.custom', (t) => {
   const set = new CharSet();
   set.add(0x61, 0x7a + 1); // a-z
 

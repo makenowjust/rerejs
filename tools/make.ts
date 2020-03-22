@@ -5,4 +5,4 @@ const make = async (): Promise<void> => {
   await Promise.all([makeLegacy(), makeUnicode()]);
 };
 
-make().catch(err => console.error(err));
+make().catch((err) => console.error(err));

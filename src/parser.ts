@@ -117,7 +117,7 @@ export class Parser {
       captureParens: this.captureParens,
       names: this.names,
       child,
-      range: [0, this.pos]
+      range: [0, this.pos],
     };
   }
 
@@ -129,7 +129,7 @@ export class Parser {
       multiline: false,
       unicode: false,
       dotAll: false,
-      sticky: false
+      sticky: false,
     };
 
     for (const c of this.flags) {
@@ -683,7 +683,7 @@ export class Parser {
         type: 'Char',
         value,
         raw: this.source.slice(begin, this.pos),
-        range: [begin, this.pos]
+        range: [begin, this.pos],
       };
     }
 
@@ -722,7 +722,7 @@ export class Parser {
           type: 'Char',
           value,
           raw: this.source.slice(begin, this.pos),
-          range: [begin, this.pos]
+          range: [begin, this.pos],
         };
       }
       case 'x': {
@@ -736,7 +736,7 @@ export class Parser {
           type: 'Char',
           value,
           raw: this.source.slice(begin, this.pos),
-          range: [begin, this.pos]
+          range: [begin, this.pos],
         };
       }
       case '0': {
@@ -778,7 +778,7 @@ export class Parser {
           type: 'Char',
           value,
           raw: this.source.slice(begin, this.pos),
-          range: [begin, this.pos]
+          range: [begin, this.pos],
         };
       }
     }
@@ -917,7 +917,7 @@ export class Parser {
             kind: 'unicode_property',
             property,
             invert,
-            range: [begin, this.pos]
+            range: [begin, this.pos],
           };
         }
 
@@ -942,7 +942,7 @@ export class Parser {
           property,
           value,
           invert,
-          range: [begin, this.pos]
+          range: [begin, this.pos],
         };
       }
     }

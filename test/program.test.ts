@@ -25,375 +25,375 @@ const testCases: TestCase[] = [
   {
     source: '',
     flags: '',
-    matches: ['', 'a']
+    matches: ['', 'a'],
   },
   {
     source: '.',
     flags: '',
     matches: ['a', 'あ'],
-    unmatches: ['', '\n']
+    unmatches: ['', '\n'],
   },
   {
     source: '^.$',
     flags: '',
     matches: ['a', 'あ', '\uD800'],
-    unmatches: ['', '\n', '\uD800\uDC00']
+    unmatches: ['', '\n', '\uD800\uDC00'],
   },
   {
     source: '^.$',
     flags: 'u',
     matches: ['a', 'あ', '\uD800', '\uD800\uDC00'],
-    unmatches: ['', '\n']
+    unmatches: ['', '\n'],
   },
   {
     source: 'a',
     flags: '',
     matches: ['a'],
-    unmatches: ['b', 'A']
+    unmatches: ['b', 'A'],
   },
   {
     source: 'a',
     flags: 'i',
     matches: ['a', 'A'],
-    unmatches: ['b']
+    unmatches: ['b'],
   },
   {
     source: 'ß',
     flags: 'i',
     matches: ['ß'],
-    unmatches: ['SS', 'ẞ']
+    unmatches: ['SS', 'ẞ'],
   },
   {
     source: 'ß',
     flags: 'iu',
     matches: ['ß', 'ẞ'],
-    unmatches: ['SS']
+    unmatches: ['SS'],
   },
   {
     source: 'ſ',
     flags: 'i',
     matches: ['ſ'],
-    unmatches: ['s', 'S']
+    unmatches: ['s', 'S'],
   },
   {
     source: 'a*',
     flags: '',
     matches: ['', 'a', 'aa'],
-    unmatches: []
+    unmatches: [],
   },
   {
     source: 'a{0,}',
     flags: '',
     matches: ['', 'a', 'aa'],
-    unmatches: []
+    unmatches: [],
   },
   {
     source: 'a{1,}',
     flags: '',
     matches: ['a', 'aa'],
-    unmatches: ['']
+    unmatches: [''],
   },
   {
     source: '(a?)*',
     flags: '',
     matches: ['', 'a', 'aa'],
-    unmatches: []
+    unmatches: [],
   },
   {
     source: '^(?:ab)*$',
     flags: '',
     matches: ['', 'ab', 'abab'],
-    unmatches: ['bb', 'bab']
+    unmatches: ['bb', 'bab'],
   },
   {
     source: 'a*',
     flags: 'i',
     matches: ['', 'a', 'aA', 'A', 'Aa'],
-    unmatches: []
+    unmatches: [],
   },
   {
     source: String.raw`\w`,
     flags: '',
     matches: ['a', '0', 'A'],
-    unmatches: ['-', '\u212A']
+    unmatches: ['-', '\u212A'],
   },
   {
     source: String.raw`\w`,
     flags: 'iu',
     matches: ['a', '0', 'A', '\u212A'],
-    unmatches: ['-']
+    unmatches: ['-'],
   },
   {
     source: String.raw`\W`,
     flags: '',
     matches: ['\u212A', '-'],
-    unmatches: ['a', '0', 'A']
+    unmatches: ['a', '0', 'A'],
   },
   {
     source: String.raw`\W`,
     flags: 'iu',
     matches: ['-'],
-    unmatches: ['a', '0', 'A', '\u212A']
+    unmatches: ['a', '0', 'A', '\u212A'],
   },
   {
     source: String.raw`\d\s\D\S`,
     flags: '',
     matches: ['0  0'],
-    unmatches: ['A  B', '0AB0']
+    unmatches: ['A  B', '0AB0'],
   },
   {
     source: String.raw`\u212A`,
     flags: 'iu',
     matches: ['k', '\u212A', 'K'],
-    unmatches: ['q', '-']
+    unmatches: ['q', '-'],
   },
   {
     source: String.raw`[\u212A]`,
     flags: 'iu',
     matches: ['k', '\u212A', 'K'],
-    unmatches: ['q', '-']
+    unmatches: ['q', '-'],
   },
   {
     source: String.raw`[^\u212A]`,
     flags: 'iu',
     matches: ['q', '-'],
-    unmatches: ['k', '\u212A', 'K']
+    unmatches: ['k', '\u212A', 'K'],
   },
   {
     source: String.raw`[a-z]`,
     flags: '',
     matches: ['a', 'b', 'z'],
-    unmatches: ['', 'あ']
+    unmatches: ['', 'あ'],
   },
   {
     source: String.raw`\u{10000}`,
     flags: 'u',
     matches: ['\u{10000}'],
-    unmatches: ['\\u{10000}']
+    unmatches: ['\\u{10000}'],
   },
   {
     source: String.raw`[\uD800\uDC00]`,
     flags: 'u',
     matches: ['\u{10000}'],
-    unmatches: ['\uD800']
+    unmatches: ['\uD800'],
   },
   {
     source: String.raw`\u{ABCD}`,
     flags: '',
     matches: ['u{ABCD}'],
-    unmatches: ['\u{ABCD}']
+    unmatches: ['\u{ABCD}'],
   },
   {
     source: String.raw`^[\uD800\uDC00]$`,
     flags: '',
     matches: ['\uD800'],
-    unmatches: ['\u{10000}']
+    unmatches: ['\u{10000}'],
   },
   {
     source: '[a-z]',
     flags: 'i',
     matches: ['a', 'z', 'A', 'Z'],
-    unmatches: ['ſ']
+    unmatches: ['ſ'],
   },
   {
     source: '[ǳ]',
     flags: 'i',
     matches: ['ǳ', 'ǲ', 'Ǳ'],
-    unmatches: ['DZ']
+    unmatches: ['DZ'],
   },
   {
     source: '[ǳ]',
     flags: 'iu',
     matches: ['ǳ', 'ǲ', 'Ǳ'],
-    unmatches: ['DZ']
+    unmatches: ['DZ'],
   },
   {
     source: '^abc$',
     flags: '',
     matches: ['abc'],
-    unmatches: ['abcd', '\nabc\n']
+    unmatches: ['abcd', '\nabc\n'],
   },
   {
     source: '^abc$',
     flags: 'm',
     matches: ['abc', '\nabc\n'],
-    unmatches: ['abcd']
+    unmatches: ['abcd'],
   },
   {
     source: 'a{2,3}',
     flags: '',
     matches: ['aa', 'aaa'],
-    unmatches: ['', 'a']
+    unmatches: ['', 'a'],
   },
   {
     source: '^a{2,3}$',
     flags: '',
     matches: ['aa', 'aaa'],
-    unmatches: ['', 'a', 'aaaa']
+    unmatches: ['', 'a', 'aaaa'],
   },
   {
     source: '^a{2,4}$',
     flags: '',
     matches: ['aa', 'aaa', 'aaaa'],
-    unmatches: ['', 'a', 'aaaaa']
+    unmatches: ['', 'a', 'aaaaa'],
   },
   {
     source: String.raw`\p{sc=Hira}`,
     flags: 'u',
     matches: ['あ'],
-    unmatches: ['a']
+    unmatches: ['a'],
   },
   {
     source: String.raw`\p{sc=Hira}`,
     flags: '',
     matches: ['p{sc=Hira}'],
-    unmatches: ['あ', 'a']
+    unmatches: ['あ', 'a'],
   },
   {
     source: String.raw`\P{sc=Hira}`,
     flags: 'u',
     matches: ['a'],
-    unmatches: ['あ']
+    unmatches: ['あ'],
   },
   {
     source: String.raw`\p{ASCII}`,
     flags: 'u',
     matches: ['a'],
-    unmatches: ['\u212A', 'あ']
+    unmatches: ['\u212A', 'あ'],
   },
   {
     source: String.raw`\P{ASCII}`,
     flags: 'u',
     matches: ['\u212A', 'あ'],
-    unmatches: ['a']
+    unmatches: ['a'],
   },
   {
     source: String.raw`[^\p{ASCII}]`,
     flags: 'ui',
     matches: ['あ'],
-    unmatches: ['a', '\u212A']
+    unmatches: ['a', '\u212A'],
   },
   {
     source: '^(?=ab).+$',
     flags: '',
     matches: ['ab', 'abc'],
-    unmatches: ['aab', 'ba']
+    unmatches: ['aab', 'ba'],
   },
   {
     source: '^(?!ab).+$',
     flags: '',
     matches: ['aab', 'ba'],
-    unmatches: ['ab', 'abc']
+    unmatches: ['ab', 'abc'],
   },
   {
     source: '^.+(?<=ab)$',
     flags: '',
     matches: ['ab', 'xab'],
-    unmatches: ['a', 'b', 'ba', 'xba']
+    unmatches: ['a', 'b', 'ba', 'xba'],
   },
   {
     source: '^.+(?<!ab)$',
     flags: '',
     matches: ['a', 'b', 'ba', 'xba'],
-    unmatches: ['ab', 'xab']
+    unmatches: ['ab', 'xab'],
   },
   {
     source: String.raw`(a|b)\1{2}`,
     flags: '',
     matches: ['aaa', 'bbb'],
-    unmatches: ['aba', 'bab']
+    unmatches: ['aba', 'bab'],
   },
   {
     source: String.raw`^\1(a)$`,
     flags: '',
     matches: ['a'],
-    unmatches: ['aa']
+    unmatches: ['aa'],
   },
   {
     source: String.raw`^.*(?<=\1(ab))$`,
     flags: '',
     matches: ['abab', 'xabab'],
-    unmatches: ['a', 'b', 'ba', 'ab']
+    unmatches: ['a', 'b', 'ba', 'ab'],
   },
   {
     source: String.raw`^.*(?<=\1(ab))$`,
     flags: 'i',
     matches: ['abab', 'xabab', 'abAB', 'aBAb'],
-    unmatches: ['a', 'b', 'ba', 'ab', 'abBa']
+    unmatches: ['a', 'b', 'ba', 'ab', 'abBa'],
   },
   {
     source: String.raw`^.*(?<=.{2})$`,
     flags: '',
     matches: ['aa', 'ab', '\uD800\uDC00'],
-    unmatches: ['', 'a', 'b']
+    unmatches: ['', 'a', 'b'],
   },
   {
     source: String.raw`^.*(?<=.{2})$`,
     flags: 'u',
     matches: ['aa', 'ab', '\uD800\uD800'],
-    unmatches: ['', 'a', 'b', '\uD800\uDC00']
+    unmatches: ['', 'a', 'b', '\uD800\uDC00'],
   },
   {
     source: String.raw`(a|b)\1{2}`,
     flags: 'i',
     matches: ['aaa', 'aAa', 'bbb', 'BbB'],
-    unmatches: ['aba', 'bab']
+    unmatches: ['aba', 'bab'],
   },
   {
     source: String.raw`(?<ch>a|b)\k<ch>{2}`,
     flags: '',
     matches: ['aaa', 'bbb'],
-    unmatches: ['aba', 'bab']
+    unmatches: ['aba', 'bab'],
   },
   {
     source: String.raw`\babc\b`,
     flags: '',
     matches: ['abc', ' abc ', ' abc', 'abc '],
-    unmatches: ['xabcx']
+    unmatches: ['xabcx'],
   },
   {
     source: String.raw`\Babc\B`,
     flags: '',
     matches: ['xabcx'],
-    unmatches: ['abc']
+    unmatches: ['abc'],
   },
   {
     source: 'a',
     flags: 'y',
     matches: ['a', 'abc'],
-    unmatches: ['xa', 'cba']
+    unmatches: ['xa', 'cba'],
   },
   {
     source: 'a',
     flags: 'y',
     pos: 1,
     matches: ['xa', 'aa'],
-    unmatches: ['cba', 'abc']
+    unmatches: ['cba', 'abc'],
   },
   {
     source: String.raw`^(?=(a+))\1$`,
     flags: '',
     matches: ['a', 'aa'],
-    unmatches: ['aab']
+    unmatches: ['aab'],
   },
   {
     source: String.raw`^(?=(a+?))\1{2}$`,
     flags: '',
     matches: ['aa'],
-    unmatches: ['aaaa', 'aaab']
+    unmatches: ['aaaa', 'aaab'],
   },
   {
     source: String.raw`^(?:(a)|(b))*\1$`,
     flags: '',
     matches: ['', 'aa', 'aaa', 'aab', 'b', 'bb', 'baa'],
-    unmatches: ['a']
-  }
+    unmatches: ['a'],
+  },
 ];
 
 for (const testCase of testCases) {
   const { source, flags, pos, matches, unmatches } = testCase;
 
-  test(`exec /${source}/${flags}${pos ? ` (pos=${pos})` : ''}`, t => {
+  test(`exec /${source}/${flags}${pos ? ` (pos=${pos})` : ''}`, (t) => {
     const program = compile(source, flags);
 
     for (const s of matches ?? []) {
@@ -406,7 +406,7 @@ for (const testCase of testCases) {
   });
 }
 
-test('toString', t => {
+test('toString', (t) => {
   const program = compile('^(?:(a)|([b-z]))*\\1$', '');
   let expected = '';
   expected += 'Program {\n';
@@ -434,7 +434,7 @@ test('toString', t => {
   t.is(program.toString(), expected);
 });
 
-test('util.inspect.custom', t => {
+test('util.inspect.custom', (t) => {
   const program = compile('^(?:(a)|([b-z]))*\\1$', '');
   let expected = '';
   expected += 'Program {\n';

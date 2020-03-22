@@ -32,7 +32,7 @@ import { hex, DATA_DIR } from './util';
 
 const makeExtraWordCharacters = (foldMap: Map<number, number>): string => {
   const wordCharacters = new Set(
-    Array.from('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_').map(c =>
+    Array.from('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_').map((c) =>
       c.charCodeAt(0)
     )
   );
