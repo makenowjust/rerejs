@@ -51,7 +51,7 @@ const isIDPart = (c: string): boolean =>
 /** Type of repeat quantifier. */
 type RepeatQuantifier = {
   min: number;
-  max: number;
+  max: number | null;
 };
 
 /**
@@ -366,7 +366,7 @@ export class Parser {
     }
 
     const { min, max } = quantifier;
-    if (min > max) {
+    if (min > (max ?? min)) {
       throw new RegExpSyntaxError('numbers out of order in quantifier');
     }
 
@@ -398,7 +398,7 @@ export class Parser {
       return null;
     }
 
-    let max = min;
+    let max: number | null = null;
     if (this.current() === ',') {
       this.pos += 1; // skip ','
       if (this.current() === '}') {
@@ -646,9 +646,14 @@ export class Parser {
         if (this.current() !== '<') {
           throw new RegExpSyntaxError('invalid named back reference');
         }
-        this.pos++; // skip '<'
+        const namePos = ++this.pos; // skip '<'
         const name = this.parseCaptureName();
-        return { type: 'NamedBackRef', name, range: [begin, this.pos] };
+        return {
+          type: 'NamedBackRef',
+          name,
+          raw: this.source.slice(namePos, this.pos - 1),
+          range: [begin, this.pos],
+        };
       }
     }
 
@@ -1045,9 +1050,11 @@ export class Parser {
     }
 
     if (this.source.startsWith('(?<', this.pos)) {
-      this.pos += 3; // skip '(?<'
       const index = ++this.captureParensIndex;
+      this.pos += 3; // skip '(?<'
+      const namePos = this.pos;
       const name = this.parseCaptureName();
+      const raw = this.source.slice(namePos, this.pos - 1);
       if (this.names.get(name) !== index) {
         throw new Error('BUG: invalid named capture');
       }
@@ -1056,7 +1063,7 @@ export class Parser {
         throw new RegExpSyntaxError('unterminated named capture');
       }
       this.pos++; // skip ')'
-      return { type: 'NamedCapture', name, child, range: [begin, this.pos] };
+      return { type: 'NamedCapture', name, raw, child, range: [begin, this.pos] };
     }
 
     throw new RegExpSyntaxError('invalid group');

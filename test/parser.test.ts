@@ -10,7 +10,6 @@ type TestCase =
       result: 'ok';
       unicode?: 'same' | 'diff' | 'error'; // default: `'same'`
       strict?: 'same' | 'diff' | 'error'; // default: `'same'
-      patternToString?: boolean; // default: `true`
     }
   | {
       source: string;
@@ -21,7 +20,7 @@ type TestCase =
 
 const testCases: TestCase[] = [
   {
-    source: '',
+    source: '(?:)',
     result: 'ok',
   },
   {
@@ -49,7 +48,6 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: '*',
@@ -68,7 +66,6 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: '{1,2}',
@@ -79,14 +76,12 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: 'a{1,b',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: 'a{2,1}',
@@ -97,7 +92,6 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: '[]',
@@ -110,17 +104,14 @@ const testCases: TestCase[] = [
   {
     source: '[-]',
     result: 'ok',
-    patternToString: false,
   },
   {
     source: '[a-]',
     result: 'ok',
-    patternToString: false,
   },
   {
     source: '[-z]',
     result: 'ok',
-    patternToString: false,
   },
   {
     source: '[a-zA-Z0-9_]',
@@ -147,7 +138,6 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`[\w\d]`,
@@ -158,14 +148,12 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`[w-\w]`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: '[',
@@ -176,7 +164,6 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: '|',
@@ -199,49 +186,42 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'diff',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\p{sc=Hira}\P{sc=Hira}`,
     result: 'ok',
     unicode: 'diff',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\p{}`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\p{sc=}`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\p{sc|`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\p{sc=Hira|`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\p`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\b\B`,
@@ -250,14 +230,12 @@ const testCases: TestCase[] = [
   {
     source: String.raw`\0`,
     result: 'ok',
-    patternToString: false,
   },
   {
     source: String.raw`\1`,
     result: 'ok',
     unicode: 'diff',
     strict: 'diff',
-    patternToString: false,
   },
   {
     source: String.raw`()\1`,
@@ -272,21 +250,24 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\012\43`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\k<abc>`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
+  },
+  {
+    source: String.raw`\k<>`,
+    result: 'ok',
+    unicode: 'error',
+    strict: 'error',
   },
   {
     source: String.raw`(?<abc>)\k`,
@@ -295,6 +276,10 @@ const testCases: TestCase[] = [
   {
     source: String.raw`(?<abc>)\k<abc>`,
     result: 'ok',
+  },
+  {
+    source: String.raw`(?<abc>)\k<>`,
+    result: 'error',
   },
   {
     source: String.raw`\k<abc>(?<abc>)`,
@@ -309,31 +294,26 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'error',
     strict: 'same',
-    patternToString: false,
   },
   {
     source: String.raw`\cA\ca`,
     result: 'ok',
-    patternToString: false,
   },
   {
     source: String.raw`\c`,
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\x11`,
     result: 'ok',
-    patternToString: true,
   },
   {
     source: '\\x',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\u1234`,
@@ -344,7 +324,6 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'diff',
     strict: 'same',
-    patternToString: false,
   },
   {
     source: String.raw`\ud800 \udc00`,
@@ -359,28 +338,24 @@ const testCases: TestCase[] = [
     result: 'ok',
     unicode: 'diff',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: String.raw`\u{10000}`,
     result: 'ok',
     unicode: 'diff',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: '\\u{}',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: '\\u{FFFFFF}',
     result: 'ok',
     unicode: 'error',
     strict: 'error',
-    patternToString: false,
   },
   {
     source: '()(?:)(?<foo>)(?=)(?!)(?<=)(?<!)',
@@ -431,11 +406,7 @@ for (const testCase of testCases) {
       case 'ok': {
         const pattern0 = parse(testCase.source, '', true);
         t.snapshot(pattern0, 'default');
-        if (testCase.patternToString ?? true) {
-          t.is(patternToString(pattern0), `/${testCase.source}/`);
-        } else {
-          t.not(patternToString(pattern0), `/${testCase.source}/`);
-        }
+        t.is(patternToString(pattern0), `/${testCase.source}/`);
         for (const variant of ['unicode', 'strict'] as const) {
           const flags = variant === 'unicode' ? 'u' : '';
           const additional = variant !== 'strict';
@@ -444,6 +415,7 @@ for (const testCase of testCases) {
             case 'diff':
             case undefined: {
               const pattern1 = parse(testCase.source, flags, additional);
+              t.is(patternToString(pattern1), `/${testCase.source}/${flags}`);
               t.snapshot(pattern1, variant);
               if (testCase[variant] === 'diff') {
                 t.notDeepEqual(pattern1.child, pattern0.child);
@@ -491,6 +463,7 @@ for (const testCase of testCases) {
             }
             case 'ok': {
               const pattern = parse(testCase.source, flags, additional);
+              t.is(patternToString(pattern), `/${testCase.source}/${flags}`);
               t.snapshot(pattern, variant);
             }
           }

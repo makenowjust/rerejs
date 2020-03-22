@@ -241,15 +241,16 @@ export class Compiler {
       this.advance = false;
     }
 
-    if (node.max === Infinity) {
+    const max = node.max ?? node.min;
+    if (max === Infinity) {
       const codes1 = this.insertCapReset(from, this.insertEmptyCheck(codes0));
       codes.push(
         { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes1.length + 1 },
         ...codes1,
         { op: 'jump', cont: -1 - codes1.length - 1 }
       );
-    } else if (node.max > node.min) {
-      const remain = node.max - node.min;
+    } else if (max > node.min) {
+      const remain = max - node.min;
       const codes1 = this.insertCapReset(from, this.insertEmptyCheck(codes0));
       if (remain === 1) {
         codes.push(

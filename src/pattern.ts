@@ -1,5 +1,3 @@
-import { escape } from './escape';
-
 /** Type for whole regular expression pattern. */
 export type Pattern = {
   type: 'Pattern';
@@ -72,6 +70,7 @@ export type Capture = {
 export type NamedCapture = {
   type: 'NamedCapture';
   name: string;
+  raw: string;
   child: Node;
   range: [number, number];
 };
@@ -111,7 +110,7 @@ export type Optional = {
 export type Repeat = {
   type: 'Repeat';
   min: number;
-  max: number;
+  max: number | null;
   nonGreedy: boolean;
   child: Node;
   range: [number, number];
@@ -226,6 +225,7 @@ export type BackRef = {
 export type NamedBackRef = {
   type: 'NamedBackRef';
   name: string;
+  raw: string;
   range: [number, number];
 };
 
@@ -233,7 +233,7 @@ export type NamedBackRef = {
 const classItemToString = (n: ClassItem): string => {
   switch (n.type) {
     case 'Char':
-      return escape(n.value, true);
+      return n.raw;
     case 'EscapeClass':
       switch (n.kind) {
         case 'digit':
@@ -249,7 +249,7 @@ const classItemToString = (n: ClassItem): string => {
       }
       break;
     case 'ClassRange':
-      return `${escape(n.begin.value, true)}-${escape(n.end.value, true)}`;
+      return `${n.begin.raw}-${n.end.raw}`;
   }
 };
 
@@ -263,52 +263,24 @@ export const nodeToString = (n: Node): string => {
     case 'Capture':
       return `(${nodeToString(n.child)})`;
     case 'NamedCapture':
-      return `(?<${n.name}>${nodeToString(n.child)})`;
+      return `(?<${n.raw}>${nodeToString(n.child)})`;
     case 'Group':
       return `(?:${nodeToString(n.child)})`;
     case 'Many':
+      return `${nodeToString(n.child)}*${n.nonGreedy ? '?' : ''}`;
     case 'Some':
+      return `${nodeToString(n.child)}+${n.nonGreedy ? '?' : ''}`;
     case 'Optional':
+      return `${nodeToString(n.child)}?${n.nonGreedy ? '?' : ''}`;
     case 'Repeat': {
       let s = nodeToString(n.child);
-      switch (n.child.type) {
-        case 'Sequence':
-        case 'Select':
-        case 'Many':
-        case 'Some':
-        case 'Optional':
-        case 'Repeat':
-        case 'WordBoundary':
-        case 'LineBegin':
-        case 'LineEnd':
-        case 'LookAhead':
-        case 'LookBehind':
-          s = `(?:${s})`;
-          break;
+      s += `{${n.min}`;
+      if (n.max === Infinity) {
+        s += ',';
+      } else if ((n.max ?? n.min) != n.min) {
+        s += `,${n.max}`;
       }
-      switch (n.type) {
-        case 'Many':
-          s += '*';
-          break;
-        case 'Some':
-          s += '+';
-          break;
-        case 'Optional':
-          s += '?';
-          break;
-        case 'Repeat':
-          s += `{${n.min}`;
-          if (n.max === Infinity) {
-            s += ',';
-          } else if (n.max != n.min) {
-            s += `,${n.max}`;
-          }
-          s += '}';
-          break;
-      }
-      if (n.nonGreedy) {
-        s += '?';
-      }
+      s += '}' + (n.nonGreedy ? '?' : '');
       return s;
     }
     case 'WordBoundary':
@@ -322,7 +294,17 @@ export const nodeToString = (n: Node): string => {
     case 'LookBehind':
       return `(?<${n.negative ? '!' : '='}${nodeToString(n.child)})`;
     case 'Char':
-      return escape(n.value);
+      switch (n.raw) {
+        case '\n':
+          return '\\n';
+        case '\r':
+          return '\\r';
+        case '\u2028':
+          return '\\u2028';
+        case '\u2029':
+          return '\\u2029';
+      }
+      return n.raw === '/' ? '\\/' : n.raw;
     case 'EscapeClass':
       return classItemToString(n);
     case 'Class':
@@ -332,7 +314,7 @@ export const nodeToString = (n: Node): string => {
     case 'BackRef':
       return `\\${n.index}`;
     case 'NamedBackRef':
-      return `\\k<${n.name}>`;
+      return `\\k<${n.raw}>`;
   }
 };
 
@@ -363,7 +345,8 @@ export const flagSetToString = (set: FlagSet): string => {
 /** Show pattern as string. */
 export const patternToString = (p: Pattern): string => {
   let s = '/';
-  s += nodeToString(p.child);
+  const n = nodeToString(p.child);
+  s += n === '' ? '(?:)' : n;
   s += '/';
   s += flagSetToString(p.flagSet);
   return s;
