@@ -1,5 +1,9 @@
 # dev
 
+Changes:
+
+  - Keep the source string through `patternToString(new Parser(source).parse)`.
+
 Fixes:
 
   - Recognize `\u2029` as line terminator character on matching.
