@@ -38,7 +38,7 @@ const size = (c: number): number => (c >= 0x10000 ? 2 : 1);
 
 /** Check the code point is line terminator. */
 const isLineTerminator = (c: number): boolean =>
-  c === 0x0a || c === 0x0d || c === 0x2028 || c === 0x0209;
+  c === 0x0a || c === 0x0d || c === 0x2028 || c === 0x2029;
 
 /** Calculate the maximum stack size without execution. */
 const calculateMaxStackSize = (codes: OpCode[]): number => {

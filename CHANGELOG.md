@@ -1,3 +1,9 @@
+# dev
+
+Fixes:
+
+  - Recognize `\u2029` as line terminator character on matching.
+
 # v0.1.3 (2020-03-19)
 
 I mistook publishing `v0.1.2`.
