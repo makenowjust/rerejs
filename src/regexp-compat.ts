@@ -2,12 +2,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 // TODO: respect the specification more (e.g. throw `TypeError` if `this` is not `RegExp`).
-// TODO: add `source` escape support.
 // TODO: add `matchAll` support.
 
 import { Compiler } from './compiler';
 import { Parser } from './parser';
-import { Pattern, flagSetToString } from './pattern';
+import { Pattern, nodeToString, flagSetToString, patternToString } from './pattern';
 import { Program } from './program';
 
 const isRegExp = (argument: unknown): boolean => {
@@ -30,7 +29,6 @@ const advance = (s: string, i: number, unicode: boolean): number => {
 
 export const RegExpCompat = ((): typeof RegExp => {
   interface RegExpCompat extends RegExp {
-    source: string;
     pattern: Pattern;
     program: Program;
   }
@@ -51,10 +49,9 @@ export const RegExpCompat = ((): typeof RegExp => {
       }
       source = (source as RegExp).source;
     }
+    source = String(source);
 
-    this.source = String(source);
-
-    const parser = new Parser(this.source, flags, true);
+    const parser = new Parser(source, flags, true);
     this.pattern = parser.parse();
     const compiler = new Compiler(this.pattern);
     this.program = compiler.compile();
@@ -70,6 +67,13 @@ export const RegExpCompat = ((): typeof RegExp => {
   }
 
   klass[Symbol.species] = klass;
+
+  Object.defineProperty(klass.prototype, 'source', {
+    get(this: RegExpCompat): string {
+      const n = nodeToString(this.pattern.child);
+      return n === '' ? '(?:)' : n;
+    },
+  });
 
   Object.defineProperty(klass.prototype, 'flags', {
     get(this: RegExpCompat): string {
@@ -96,6 +100,10 @@ export const RegExpCompat = ((): typeof RegExp => {
     return this;
   };
 
+  klass.prototype.toString = function toString(this: RegExpCompat): string {
+    return patternToString(this.pattern);
+  };
+
   klass.prototype.exec = function exec(this: RegExpCompat, string: string): RegExpExecArray | null {
     const update = this.global || this.sticky;
 
@@ -115,7 +123,7 @@ export const RegExpCompat = ((): typeof RegExp => {
     return !!this.exec(string);
   };
 
-  klass.prototype[Symbol.match] = function match(
+  klass.prototype[Symbol.match] = function (
     this: RegExpCompat,
     string: string
   ): RegExpMatchArray | null {
@@ -138,7 +146,7 @@ export const RegExpCompat = ((): typeof RegExp => {
     return this.exec(string);
   };
 
-  klass.prototype[Symbol.replace] = function replace(
+  klass.prototype[Symbol.replace] = function (
     this: RegExpCompat,
     string: string,
     replacer: string | ((substring: string, ...args: any[]) => string)
@@ -245,7 +253,7 @@ export const RegExpCompat = ((): typeof RegExp => {
     return result;
   };
 
-  klass.prototype[Symbol.search] = function search(this: RegExpCompat, string: string): number {
+  klass.prototype[Symbol.search] = function (this: RegExpCompat, string: string): number {
     const prevLastIndex = this.lastIndex;
     this.lastIndex = 0;
     const m = this.exec(string);
@@ -253,13 +261,15 @@ export const RegExpCompat = ((): typeof RegExp => {
     return (m && m.index) ?? -1;
   };
 
-  klass.prototype[Symbol.split] = function split(
+  klass.prototype[Symbol.split] = function (
     this: RegExpCompat,
     string: string,
     limit?: number
   ): string[] {
     const flags = this.sticky ? this.flags : this.flags + 'y';
-    const splitter = new RegExpCompat(this.source, flags);
+    const constructor: any = this.constructor;
+    const species = (constructor && constructor[Symbol.species]) ?? klass;
+    const splitter: RegExp = new species(this.source, flags);
     limit = (limit ?? 2 ** 32 - 1) >>> 0;
 
     const result: string[] = [];

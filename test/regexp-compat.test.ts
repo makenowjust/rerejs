@@ -113,6 +113,9 @@ for (const testCase of testCases) {
   test(`compat /${testCase.source}/${testCase.flags}`, (t) => {
     const r0 = new RegExp(testCase.source, testCase.flags);
     const r1 = new RegExpCompat(testCase.source, testCase.flags);
+    t.is(r1.source, r0.source);
+    t.is(r1.flags, r0.flags);
+    t.is(r1.toString(), r0.toString());
 
     for (const s of testCase.strings) {
       r0.lastIndex = r1.lastIndex = 0;
