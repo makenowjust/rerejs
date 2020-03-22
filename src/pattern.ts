@@ -229,11 +229,30 @@ export type NamedBackRef = {
   range: [number, number];
 };
 
+/**
+ * Escapes raw character for showing.
+ *
+ * See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-escaperegexppattern.
+ */
+const escapeRaw = (raw: string): string => {
+  switch (raw) {
+    case '\n':
+      return '\\n';
+    case '\r':
+      return '\\r';
+    case '\u2028':
+      return '\\u2028';
+    case '\u2029':
+      return '\\u2029';
+  }
+  return raw;
+};
+
 /** Show class item as string. */
 const classItemToString = (n: ClassItem): string => {
   switch (n.type) {
     case 'Char':
-      return n.raw;
+      return escapeRaw(n.raw);
     case 'EscapeClass':
       switch (n.kind) {
         case 'digit':
@@ -247,9 +266,10 @@ const classItemToString = (n: ClassItem): string => {
         case 'unicode_property_value':
           return `\\${n.invert ? 'P' : 'p'}{${n.property}=${n.value}}`;
       }
-      break;
+    // The above `switch-case` is exhaustive and it is checked by `tsc`, so `eslint` rule is disabled.
+    // eslint-disable-next-line no-fallthrough
     case 'ClassRange':
-      return `${n.begin.raw}-${n.end.raw}`;
+      return `${escapeRaw(n.begin.raw)}-${escapeRaw(n.end.raw)}`;
   }
 };
 
@@ -293,18 +313,10 @@ export const nodeToString = (n: Node): string => {
       return `(?${n.negative ? '!' : '='}${nodeToString(n.child)})`;
     case 'LookBehind':
       return `(?<${n.negative ? '!' : '='}${nodeToString(n.child)})`;
-    case 'Char':
-      switch (n.raw) {
-        case '\n':
-          return '\\n';
-        case '\r':
-          return '\\r';
-        case '\u2028':
-          return '\\u2028';
-        case '\u2029':
-          return '\\u2029';
-      }
-      return n.raw === '/' ? '\\/' : n.raw;
+    case 'Char': {
+      const c = escapeRaw(n.raw);
+      return c === '/' ? '\\/' : c;
+    }
     case 'EscapeClass':
       return classItemToString(n);
     case 'Class':

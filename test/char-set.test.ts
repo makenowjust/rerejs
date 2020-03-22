@@ -6,8 +6,9 @@ import { CharSet } from '../src/char-set';
 
 test('simple', (t) => {
   const set = new CharSet();
-  set.add(10, 20);
+  t.false(set.has(10));
 
+  set.add(10, 20);
   t.true(set.has(15));
   t.true(set.has(10), 'has begin value');
   t.false(set.has(20), 'not have end value');

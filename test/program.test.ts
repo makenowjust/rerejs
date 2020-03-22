@@ -256,6 +256,24 @@ const testCases: TestCase[] = [
     unmatches: ['あ'],
   },
   {
+    source: String.raw`\p{scx=Hira}`,
+    flags: 'u',
+    matches: ['あ'],
+    unmatches: ['a'],
+  },
+  {
+    source: String.raw`\p{scx=Hira}`,
+    flags: '',
+    matches: ['p{scx=Hira}'],
+    unmatches: ['あ', 'a'],
+  },
+  {
+    source: String.raw`\P{scx=Hira}`,
+    flags: 'u',
+    matches: ['a'],
+    unmatches: ['あ'],
+  },
+  {
     source: String.raw`\p{ASCII}`,
     flags: 'u',
     matches: ['a'],
@@ -272,6 +290,18 @@ const testCases: TestCase[] = [
     flags: 'ui',
     matches: ['あ'],
     unmatches: ['a', '\u212A'],
+  },
+  {
+    source: String.raw`\p{Lu}`,
+    flags: 'u',
+    matches: ['A'],
+    unmatches: ['/'],
+  },
+  {
+    source: String.raw`\P{Lu}`,
+    flags: 'u',
+    matches: ['/'],
+    unmatches: ['A'],
   },
   {
     source: '^(?=ab).+$',
@@ -374,6 +404,12 @@ const testCases: TestCase[] = [
     source: String.raw`^(?=(a+))\1$`,
     flags: '',
     matches: ['a', 'aa'],
+    unmatches: ['aab'],
+  },
+  {
+    source: String.raw`^.*(?<=\k<\u3042>(?<あ>a))$`,
+    flags: '',
+    matches: ['aa', 'baa'],
     unmatches: ['aab'],
   },
   {

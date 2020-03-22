@@ -278,6 +278,14 @@ const testCases: TestCase[] = [
     result: 'ok',
   },
   {
+    source: String.raw`(?<abc>)\1`,
+    result: 'ok',
+  },
+  {
+    source: String.raw`(?<\u3042>)\k<\u3042>`,
+    result: 'ok',
+  },
+  {
     source: String.raw`(?<abc>)\k<>`,
     result: 'error',
   },
@@ -391,6 +399,10 @@ const testCases: TestCase[] = [
   },
   {
     source: '(?%',
+    result: 'error',
+  },
+  {
+    source: ')',
     result: 'error',
   },
 ];

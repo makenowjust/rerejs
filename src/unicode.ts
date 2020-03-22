@@ -13,9 +13,9 @@ const loadCategory = (v: string): CharSet | null => {
   v = propertyValueAliases.get('General_Category')?.get(v) || v;
 
   const key = `General_Category.${v}`;
-  const set0 = CACHE.get(key);
-  if (set0) {
-    return set0;
+  const cache = CACHE.get(key);
+  if (cache) {
+    return cache;
   }
 
   const data = category.get(v);
@@ -33,9 +33,9 @@ const loadScript = (v: string): CharSet | null => {
   v = propertyValueAliases.get('Script')?.get(v) || v;
 
   const key = `Script.${v}`;
-  const set0 = CACHE.get(key);
-  if (set0) {
-    return set0;
+  const cache = CACHE.get(key);
+  if (cache) {
+    return cache;
   }
 
   const data = script.get(v);
@@ -53,9 +53,9 @@ const loadScriptExtensions = (v: string): CharSet | null => {
   v = propertyValueAliases.get('Script_Extensions')?.get(v) || v;
 
   const key = `Script_Extensions.${v}`;
-  const set0 = CACHE.get(key);
-  if (set0) {
-    return set0;
+  const cache = CACHE.get(key);
+  if (cache) {
+    return cache;
   }
 
   const baseSet = loadScript(v);
@@ -64,7 +64,7 @@ const loadScriptExtensions = (v: string): CharSet | null => {
   }
   const data = scriptExtensions.get(v);
   if (!data) {
-    return baseSet;
+    throw new Error('BUG: Script_Extensions must contain each value of Script');
   }
 
   const extSet = new CharSet(data);
@@ -85,9 +85,9 @@ export const loadProperty = (p: string): CharSet | null => {
   // Canonicalize property name.
   p = propertyAliases.get(p) || p;
 
-  const set0 = CACHE.get(p);
-  if (set0) {
-    return set0;
+  const cache = CACHE.get(p);
+  if (cache) {
+    return cache;
   }
 
   const data = property.get(p);

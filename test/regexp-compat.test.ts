@@ -63,6 +63,16 @@ const testCases: TestCase[] = [
     strings: ['', 'a'],
   },
   {
+    source: '\n\r\u2028\u2029/',
+    flags: '',
+    strings: ['\n\r\u2028\u2029/'],
+  },
+  {
+    source: '[\n\r\u2028\u2029/]',
+    flags: '',
+    strings: ['\n'],
+  },
+  {
     source: '.',
     flags: 'g',
     strings: ['', 'a', '\ud800\udc00'],
@@ -86,6 +96,16 @@ const testCases: TestCase[] = [
     source: 'a*',
     flags: 'gy',
     strings: ['bb', 'aba', 'bbbab', 'babaab'],
+  },
+  {
+    source: '(a+?)(a*?)(a??)(a{2,3}?)(a{2,4}?)(a{2,}?)b',
+    flags: '',
+    strings: ['bb', 'aba', 'bbbab', 'babaab', 'aaaaaab', 'abaabaaaba'],
+  },
+  {
+    source: '(a+)(a*)(a?)(a{2,3})(a{2,4})(a{2,})b',
+    flags: '',
+    strings: ['bb', 'aba', 'bbbab', 'babaab', 'aaaaaab', 'abaabaaaba'],
   },
   {
     source: '$',

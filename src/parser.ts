@@ -38,12 +38,14 @@ const isUnicodeProperty = (c: string): boolean => isControl(c) || c === '_';
 /** Check the character is part of Unicode property value. */
 const isUnicodePropertyValue = (c: string): boolean => isUnicodeProperty(c) || isDigit(c);
 
-const idStart = new CharSet(property.get('ID_Start') ?? []);
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const idStart = new CharSet(property.get('ID_Start')!);
 /** Check the character is identifier start character. */
 const isIDStart = (c: string): boolean =>
   c === '$' || c === '_' || idStart.has(c.codePointAt(0) ?? -1);
 
-const idContinue = new CharSet(property.get('ID_Continue') ?? []);
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const idContinue = new CharSet(property.get('ID_Continue')!);
 /** Check the character is identifier part character. */
 const isIDPart = (c: string): boolean =>
   c === '$' || c === '\u200C' || c === '\u200D' || idContinue.has(c.codePointAt(0) ?? -1);

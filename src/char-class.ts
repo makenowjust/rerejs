@@ -39,7 +39,8 @@ export const invertUnicodeWord: CharSet = unicodeWord.clone().invert();
  * See https://www.ecma-international.org/ecma-262/10.0/index.html#prod-WhiteSpace
  * and https://www.ecma-international.org/ecma-262/10.0/index.html#prod-LineTerminator.
  */
-export const space: CharSet = new CharSet(category.get('Space_Separator') ?? []);
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+export const space: CharSet = new CharSet(category.get('Space_Separator')!);
 space.add(0x09, 0x0d + 1); // <TAB>, <LF>, <VT>, <FF>, <CR>
 space.add(0xa0, 0xa0 + 1); // <NBSP>
 space.add(0xfeff, 0xfeff + 1); // <ZWNBSP>

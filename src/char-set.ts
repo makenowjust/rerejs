@@ -83,7 +83,7 @@ export class CharSet {
   public has(c: number): boolean {
     const i = this.searchEnd(c);
 
-    if (i * 2 >= this.data.length) {
+    if (i < 0 || this.data.length <= i * 2) {
       return false;
     }
     const begin = this.data[i * 2];
