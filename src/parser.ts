@@ -501,18 +501,18 @@ export class Parser {
       invert = true;
     }
 
-    const items: ClassItem[] = [];
+    const children: ClassItem[] = [];
 
     for (;;) {
       const c = this.current();
       if (c === ']') {
         break;
       }
-      items.push(this.parseClassItem());
+      children.push(this.parseClassItem());
     }
     this.pos++; // skip ']'
 
-    return { type: 'Class', invert, items, range: [begin, this.pos] };
+    return { type: 'Class', invert, children, range: [begin, this.pos] };
   }
 
   /** Parse an item of `character class` pattern. */
@@ -549,7 +549,7 @@ export class Parser {
       throw new RegExpSyntaxError('range out of order in character class');
     }
 
-    return { type: 'ClassRange', begin, end, range: [beginPos, this.pos] };
+    return { type: 'ClassRange', children: [begin, end], range: [beginPos, this.pos] };
   }
 
   /** Parse an atom of `character class` range. */

@@ -196,15 +196,14 @@ export type UnicodePropertyValueEscapeClass = {
 export type Class = {
   type: 'Class';
   invert: boolean;
-  items: ClassItem[];
+  children: ClassItem[];
   range: [number, number];
 };
 
 /** Type for character range in class pattern. */
 export type ClassRange = {
   type: 'ClassRange';
-  begin: Char;
-  end: Char;
+  children: [Char, Char];
   range: [number, number];
 };
 
@@ -269,7 +268,7 @@ const classItemToString = (n: ClassItem): string => {
     // The above `switch-case` is exhaustive and it is checked by `tsc`, so `eslint` rule is disabled.
     // eslint-disable-next-line no-fallthrough
     case 'ClassRange':
-      return `${escapeRaw(n.begin.raw)}-${escapeRaw(n.end.raw)}`;
+      return `${escapeRaw(n.children[0].raw)}-${escapeRaw(n.children[1].raw)}`;
   }
 };
 
@@ -320,7 +319,7 @@ export const nodeToString = (n: Node): string => {
     case 'EscapeClass':
       return classItemToString(n);
     case 'Class':
-      return `[${n.invert ? '^' : ''}${n.items.map(classItemToString).join('')}]`;
+      return `[${n.invert ? '^' : ''}${n.children.map(classItemToString).join('')}]`;
     case 'Dot':
       return '.';
     case 'BackRef':

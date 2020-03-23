@@ -358,7 +358,7 @@ export class Compiler {
 
   private compileClass(node: Class): OpCode[] {
     const set = new CharSet();
-    for (const item of node.items) {
+    for (const item of node.children) {
       switch (item.type) {
         case 'Char':
           set.add(item.value, item.value + 1);
@@ -367,7 +367,7 @@ export class Compiler {
           set.addCharSet(this.escapeClassToSet(item));
           break;
         case 'ClassRange':
-          set.add(item.begin.value, item.end.value + 1);
+          set.add(item.children[0].value, item.children[1].value + 1);
           break;
       }
     }
