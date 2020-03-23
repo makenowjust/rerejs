@@ -5,6 +5,7 @@ Changes:
   - Rename AST property names for consistency.
     - `ClassRange#begin` and `#end` to `#children`
     - `Class#items` to `#children`
+  - Rename `Select` AST node to `Disjunction` to follow ECMA-262.
   - Add `Element` type as alias of `Pattern | Node | ClassItem`.
   - Bundle `mjs` file.
   - Fix up an internal directory structure.
