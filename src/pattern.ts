@@ -44,6 +44,9 @@ export type Node =
 /** Type for items of character class. */
 export type ClassItem = Char | EscapeClass | ClassRange;
 
+/** Type for AST elements. */
+export type Element = Pattern | Node | ClassItem;
+
 /** Type for select pattern `/(a|b)/`. */
 export type Select = {
   type: 'Select';
