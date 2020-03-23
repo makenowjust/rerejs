@@ -1,3 +1,13 @@
+# dev
+
+Changes:
+
+  - Rename AST property names for consistency.
+    - `ClassRange#begin` and `#end` to `#children`
+    - `Class#items` to `#children`
+  - Add `Element` type as alias of `Pattern | Node | ClassItem`.
+  - Bundle `mjs` file.
+
 # v0.1.4 (2020-03-23)
 
 Changes:
