@@ -10,6 +10,10 @@ const main = {
       file: 'lib/index.js',
       format: 'cjs',
     },
+    {
+      file: 'lib/index.mjs',
+      format: 'esm',
+    },
   ],
   external: ['util'],
   plugins: [
