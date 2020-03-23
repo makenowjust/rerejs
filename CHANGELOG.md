@@ -7,6 +7,7 @@ Changes:
     - `Class#items` to `#children`
   - Add `Element` type as alias of `Pattern | Node | ClassItem`.
   - Bundle `mjs` file.
+  - Fix up an internal directory structure.
 
 # v0.1.4 (2020-03-23)
 
