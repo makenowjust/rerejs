@@ -20,7 +20,7 @@ export type FlagSet = {
 
 /** Type for part of regular expression pattern. */
 export type Node =
-  | Select
+  | Disjunction
   | Sequence
   | Capture
   | NamedCapture
@@ -48,8 +48,8 @@ export type ClassItem = Char | EscapeClass | ClassRange;
 export type Element = Pattern | Node | ClassItem;
 
 /** Type for select pattern `/(a|b)/`. */
-export type Select = {
-  type: 'Select';
+export type Disjunction = {
+  type: 'Disjunction';
   children: Node[];
   range: [number, number];
 };
@@ -280,7 +280,7 @@ export const nodeToString = (n: Node): string => {
   switch (n.type) {
     case 'Sequence':
       return n.children.map(nodeToString).join('');
-    case 'Select':
+    case 'Disjunction':
       return n.children.map(nodeToString).join('|');
     case 'Capture':
       return `(${nodeToString(n.child)})`;

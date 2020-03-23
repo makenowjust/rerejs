@@ -108,7 +108,7 @@ export class Parser {
     this.preprocessCaptures();
 
     this.pos = 0;
-    const child = this.parseSelect();
+    const child = this.parseDisjunction();
     if (this.current() !== '') {
       throw new RegExpSyntaxError("too many ')'");
     }
@@ -241,12 +241,11 @@ export class Parser {
   }
 
   /**
-   * Parse `select` pattern.
+   * Parse `disjunction` pattern.
    *
-   * `select` is named `Disjunction` in ECMA-262 specification.
    * See https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Disjunction.
    */
-  private parseSelect(): Node {
+  private parseDisjunction(): Node {
     const begin = this.pos;
     const children = [this.parseSequence()];
 
@@ -262,7 +261,7 @@ export class Parser {
       return children[0];
     }
 
-    return { type: 'Select', children, range: [begin, this.pos] };
+    return { type: 'Disjunction', children, range: [begin, this.pos] };
   }
 
   /**
@@ -273,7 +272,7 @@ export class Parser {
    * it does not make sence without the relation to `Disjunction`.
    * In formal language theory, `sequence` or `concatination` is better.
    *
-   * See https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Disjunction
+   * See https://www.ecma-international.org/ecma-262/10.0/index.html#prod-Alternative.
    */
   private parseSequence(): Node {
     const begin = this.pos;
@@ -992,7 +991,7 @@ export class Parser {
 
     if (!this.source.startsWith('(?', this.pos)) {
       this.pos++; // skip '('
-      const child = this.parseSelect();
+      const child = this.parseDisjunction();
       const index = ++this.captureParensIndex;
       if (this.current() !== ')') {
         throw new RegExpSyntaxError('unterminated capture');
@@ -1003,7 +1002,7 @@ export class Parser {
 
     if (this.source.startsWith('(?:', this.pos)) {
       this.pos += 3; // skip '(?:'
-      const child = this.parseSelect();
+      const child = this.parseDisjunction();
       if (this.current() !== ')') {
         throw new RegExpSyntaxError('unterminated group');
       }
@@ -1013,7 +1012,7 @@ export class Parser {
 
     if (this.source.startsWith('(?=', this.pos)) {
       this.pos += 3; // skip '(?='
-      const child = this.parseSelect();
+      const child = this.parseDisjunction();
       if (this.current() !== ')') {
         throw new RegExpSyntaxError('unterminated look-ahead');
       }
@@ -1023,7 +1022,7 @@ export class Parser {
 
     if (this.source.startsWith('(?!', this.pos)) {
       this.pos += 3; // skip '(?!'
-      const child = this.parseSelect();
+      const child = this.parseDisjunction();
       if (this.current() !== ')') {
         throw new RegExpSyntaxError('unterminated look-ahead');
       }
@@ -1033,7 +1032,7 @@ export class Parser {
 
     if (this.source.startsWith('(?<=', this.pos)) {
       this.pos += 4; // skip '(?<='
-      const child = this.parseSelect();
+      const child = this.parseDisjunction();
       if (this.current() !== ')') {
         throw new RegExpSyntaxError('unterminated look-behind');
       }
@@ -1043,7 +1042,7 @@ export class Parser {
 
     if (this.source.startsWith('(?<!', this.pos)) {
       this.pos += 4; // skip '(?<!'
-      const child = this.parseSelect();
+      const child = this.parseDisjunction();
       if (this.current() !== ')') {
         throw new RegExpSyntaxError('unterminated look-behind');
       }
@@ -1060,7 +1059,7 @@ export class Parser {
       if (this.names.get(name) !== index) {
         throw new Error('BUG: invalid named capture');
       }
-      const child = this.parseSelect();
+      const child = this.parseDisjunction();
       if (this.current() !== ')') {
         throw new RegExpSyntaxError('unterminated named capture');
       }

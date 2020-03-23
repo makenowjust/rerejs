@@ -14,7 +14,7 @@ import { RegExpSyntaxError } from '../syntax/error';
 import {
   Pattern,
   Node,
-  Select,
+  Disjunction,
   Sequence,
   Capture,
   NamedCapture,
@@ -81,8 +81,8 @@ export class Compiler {
 
   private compileNode(node: Node): OpCode[] {
     switch (node.type) {
-      case 'Select':
-        return this.compileSelect(node);
+      case 'Disjunction':
+        return this.compileDisjunction(node);
       case 'Sequence':
         return this.compileSequence(node);
       case 'Capture':
@@ -124,7 +124,7 @@ export class Compiler {
     }
   }
 
-  private compileSelect(node: Select): OpCode[] {
+  private compileDisjunction(node: Disjunction): OpCode[] {
     if (node.children.length === 0) {
       throw new Error('BUG: invalid pattern');
     }
