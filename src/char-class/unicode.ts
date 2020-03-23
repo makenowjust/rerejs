@@ -1,8 +1,8 @@
 import propertyAliases from 'unicode-property-aliases-ecmascript';
 import propertyValueAliases from 'unicode-property-value-aliases-ecmascript';
 
+import { category, property, script, scriptExtensions } from '../data/unicode';
 import { CharSet } from './char-set';
-import { category, property, script, scriptExtensions } from './data/unicode';
 
 /** Cache for loaded `ChaeSet`. */
 const CACHE: Map<string, CharSet> = new Map();

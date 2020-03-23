@@ -2,9 +2,9 @@ import util from 'util';
 
 import test from 'ava';
 
-import { Compiler } from '../src/compiler';
-import { Parser } from '../src/parser';
-import { Program } from '../src/program';
+import { Compiler } from '../../src/engine/compiler';
+import { Program } from '../../src/engine/program';
+import { Parser } from '../../src/syntax/parser';
 
 const compile = (source: string, flags: string): Program => {
   const parser = new Parser(source, flags);

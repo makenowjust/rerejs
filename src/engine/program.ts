@@ -1,10 +1,10 @@
 import util from 'util';
 
+import { word, unicodeWord } from '../char-class/ascii';
+import { Pattern, patternToString } from '../syntax/pattern';
 import { canonicalize, uncanonicalize } from './canonicalize';
-import { word, unicodeWord } from './char-class';
 import { Match } from './match';
 import { OpCode, codesToString } from './op-code';
-import { Pattern, patternToString } from './pattern';
 
 /** Get `s[i]` code point. */
 const index = (s: string, i: number, unicode: boolean): number => {

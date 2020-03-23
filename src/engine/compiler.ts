@@ -1,4 +1,3 @@
-import { canonicalize } from './canonicalize';
 import {
   digit,
   invertDigit,
@@ -8,10 +7,10 @@ import {
   invertUnicodeWord,
   space,
   invertSpace,
-} from './char-class';
-import { CharSet } from './char-set';
-import { RegExpSyntaxError } from './error';
-import { OpCode } from './op-code';
+} from '../char-class/ascii';
+import { CharSet } from '../char-class/char-set';
+import { loadProperty, loadPropertyValue } from '../char-class/unicode';
+import { RegExpSyntaxError } from '../syntax/error';
 import {
   Pattern,
   Node,
@@ -35,9 +34,10 @@ import {
   Dot,
   BackRef,
   NamedBackRef,
-} from './pattern';
+} from '../syntax/pattern';
+import { canonicalize } from './canonicalize';
+import { OpCode } from './op-code';
 import { Program } from './program';
-import { loadProperty, loadPropertyValue } from './unicode';
 
 /** `Compiler` is a compiler for `Pattern` to `Program`. */
 export class Compiler {

@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { RegExpCompat } from '../src/regexp-compat';
+import { RegExpCompat } from '../../src/ponyfill/regexp-compat';
 
 test('legacy methods', (t) => {
   t.throws(() => RegExpCompat.$1);

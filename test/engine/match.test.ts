@@ -2,7 +2,7 @@ import util from 'util';
 
 import test from 'ava';
 
-import { Match } from '../src/match';
+import { Match } from '../../src/engine/match';
 
 test('getters', (t) => {
   const m = new Match('test', [0, 4, -1, -1, 1, 3], new Map([['x', 2]]));

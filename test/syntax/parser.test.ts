@@ -1,8 +1,8 @@
 import test from 'ava';
 
-import { RegExpSyntaxError } from '../src/error';
-import { Parser } from '../src/parser';
-import { Pattern, patternToString } from '../src/pattern';
+import { RegExpSyntaxError } from '../../src/syntax/error';
+import { Parser } from '../../src/syntax/parser';
+import { Pattern, patternToString } from '../../src/syntax/pattern';
 
 type TestCase =
   | {

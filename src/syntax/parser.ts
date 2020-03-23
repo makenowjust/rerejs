@@ -1,5 +1,5 @@
-import { CharSet } from './char-set';
-import { property } from './data/unicode';
+import { CharSet } from '../char-class/char-set';
+import { property } from '../data/unicode';
 import { RegExpSyntaxError } from './error';
 import { Pattern, Node, ClassItem, Char, EscapeClass, FlagSet } from './pattern';
 

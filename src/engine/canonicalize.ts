@@ -1,5 +1,8 @@
-import { inverseFoldMap as legacyFoldMap } from './data/legacy';
-import { foldMap as unicodeFoldMap, inverseFoldMap as unicodeInverseFoldMap } from './data/unicode';
+import { inverseFoldMap as legacyFoldMap } from '../data/legacy';
+import {
+  foldMap as unicodeFoldMap,
+  inverseFoldMap as unicodeInverseFoldMap,
+} from '../data/unicode';
 
 /** Return case-folded code point for ignore-case comparison. */
 export const canonicalize = (c: number, unicode: boolean): number => {

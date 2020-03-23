@@ -1,7 +1,7 @@
 // See https://www.ecma-international.org/ecma-262/10.0/index.html#sec-characterclassescape.
 
+import { extraWordCharacters, category } from '../data/unicode';
 import { CharSet } from './char-set';
-import { extraWordCharacters, category } from './data/unicode';
 
 /** A `CharSet` which contains ASCII digits. */
 export const digit: CharSet = new CharSet();

@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { escape } from '../src/escape';
+import { escape } from '../../src/char-class/escape';
 
 test('escape', (t) => {
   t.true(new RegExp(escape(0)).test(String.fromCodePoint(0)));

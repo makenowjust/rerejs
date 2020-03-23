@@ -4,10 +4,10 @@
 // TODO: respect the specification more (e.g. throw `TypeError` if `this` is not `RegExp`).
 // TODO: add `matchAll` support.
 
-import { Compiler } from './compiler';
-import { Parser } from './parser';
-import { Pattern, nodeToString, flagSetToString, patternToString } from './pattern';
-import { Program } from './program';
+import { Compiler } from '../engine/compiler';
+import { Program } from '../engine/program';
+import { Parser } from '../syntax/parser';
+import { Pattern, nodeToString, flagSetToString, patternToString } from '../syntax/pattern';
 
 const isRegExp = (argument: unknown): boolean => {
   if (argument && typeof argument === 'object') {

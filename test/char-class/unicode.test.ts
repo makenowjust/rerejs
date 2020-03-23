@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { loadProperty, loadPropertyValue } from '../src/unicode';
+import { loadProperty, loadPropertyValue } from '../../src/char-class/unicode';
 
 test('loadProperty', (t) => {
   const ascii = loadProperty('ASCII');

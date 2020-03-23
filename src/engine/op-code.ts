@@ -1,5 +1,5 @@
-import { CharSet } from './char-set';
-import { escape } from './escape';
+import { CharSet } from '../char-class/char-set';
+import { escape } from '../char-class/escape';
 
 /** `OpCode` is a type of op-codes. */
 export type OpCode =

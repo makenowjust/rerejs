@@ -2,7 +2,7 @@
 
 import propertyAliases from 'unicode-property-aliases-ecmascript';
 
-import { CharSet } from '../src/char-set';
+import { CharSet } from '../src/char-class/char-set';
 
 // Link https://www.ecma-international.org/ecma-262/10.0/index.html#table-unicode-general-category-values.
 export const PROPERTY = [

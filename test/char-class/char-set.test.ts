@@ -2,7 +2,7 @@ import util from 'util';
 
 import test from 'ava';
 
-import { CharSet } from '../src/char-set';
+import { CharSet } from '../../src/char-class/char-set';
 
 test('simple', (t) => {
   const set = new CharSet();

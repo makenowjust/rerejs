@@ -1,4 +1,4 @@
-# Snapshot report for `test/parser.test.ts`
+# Snapshot report for `test/syntax/parser.test.ts`
 
 The actual snapshot is saved in `parser.test.ts.snap`.
 
