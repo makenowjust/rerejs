@@ -9,6 +9,7 @@ Changes:
   - Add `Element` type as alias of `Pattern | Node | ClassItem`.
   - Bundle `mjs` file.
   - Fix up an internal directory structure.
+  - Allow to call `CharSet#add` for adding one value.
 
 # v0.1.4 (2020-03-23)
 
