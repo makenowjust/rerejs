@@ -8,6 +8,9 @@ test('simple', (t) => {
   const set = new CharSet();
   t.false(set.has(10));
 
+  set.add(10);
+  t.true(set.has(10));
+
   set.add(10, 20);
   t.true(set.has(15));
   t.true(set.has(10), 'has begin value');

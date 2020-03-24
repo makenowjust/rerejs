@@ -29,7 +29,7 @@ export class CharSet {
   }
 
   /** Add a range to this. */
-  public add(begin: number, end: number): void {
+  public add(begin: number, end: number = begin + 1): void {
     const i = this.searchBegin(begin);
     const j = this.searchEnd(end);
 
