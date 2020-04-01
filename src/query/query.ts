@@ -1,5 +1,5 @@
-import { Element } from '../syntax/pattern';
-import { recurse, RecurseContext, BREAK, SKIP } from './recurse';
+import { ClassItem, Pattern, Node } from '../syntax/pattern';
+import { NodePath } from './recurse/path';
 import { Selector, SelectorParser } from './selector';
 
 /**
@@ -59,7 +59,7 @@ export class Specificity {
 /**
  * `Query` is a wrapper of `Selector`.
  *
- * It can `match` against `Element`,
+ * It can `match` against `NodePath`,
  * and it has some pre-calculated information of the selector.
  */
 export class Query {
@@ -135,17 +135,21 @@ export class Query {
   }
 
   /** An implementation of `Query#match`. */
-  private static match(s: Selector, e: Element, context: RecurseContext, scope: Element): boolean {
+  private static match(
+    s: Selector,
+    path: NodePath<Pattern | Node | ClassItem>,
+    scope: NodePath<Pattern | Node | ClassItem>
+  ): boolean {
     switch (s.type) {
       case 'universal':
         return true;
 
       case 'type':
-        return e.type === s.value;
+        return path.node.type === s.value;
 
       case 'is':
         for (const selector of s.selectors) {
-          if (Query.match(selector, e, context, scope)) {
+          if (Query.match(selector, path, scope)) {
             return true;
           }
         }
@@ -153,7 +157,7 @@ export class Query {
 
       case 'compound':
         for (const selector of s.selectors) {
-          if (!Query.match(selector, e, context, scope)) {
+          if (!Query.match(selector, path, scope)) {
             return false;
           }
         }
@@ -161,7 +165,7 @@ export class Query {
 
       case 'not':
         for (const selector of s.selectors) {
-          if (Query.match(selector, e, context, scope)) {
+          if (Query.match(selector, path, scope)) {
             return false;
           }
         }
@@ -171,26 +175,25 @@ export class Query {
         for (const selector of s.selectors) {
           // To match sibling and adjacent selector correctly, try to match from the parent.
           // It is too inefficient -_-
-          const parent = context.ancestry[context.ancestry.length - 1] ?? e;
+          const parent = path.parent() ?? path;
           let matched = false;
           let skip = true;
-          recurse(
-            parent,
-            {
-              enter(child, context) {
-                // Skip elements to reach the current element.
-                if (skip) {
-                  skip = child !== e;
-                  return skip && child !== parent ? SKIP : undefined;
+          parent.recurse({
+            enter(child) {
+              // Skip nodes to reach the current node.
+              if (skip) {
+                skip = child !== path;
+                if (skip && child !== parent) {
+                  child.skip();
                 }
-                if (Query.match(selector, child, context, e)) {
-                  matched = true;
-                  return BREAK;
-                }
-              },
+                return;
+              }
+              if (Query.match(selector, child, path)) {
+                matched = true;
+                child.break();
+              }
             },
-            Query.upwardContext(context)
-          );
+          });
           if (matched) {
             return true;
           }
@@ -199,61 +202,49 @@ export class Query {
       }
 
       case 'child':
-        if (Query.match(s.right, e, context, scope)) {
-          const parent = context.ancestry[context.ancestry.length - 1];
-          if (!parent) {
-            return false;
+        if (Query.match(s.right, path, scope)) {
+          const parent = path.parent();
+          if (parent) {
+            return Query.match(s.left, parent, scope);
           }
-          return Query.match(s.left, parent, Query.upwardContext(context), scope);
         }
         return false;
 
       case 'descendant':
-        if (Query.match(s.right, e, context, scope)) {
-          while (context.ancestry.length > 0) {
-            const parent = context.ancestry[context.ancestry.length - 1];
-            context = Query.upwardContext(context);
-            if (Query.match(s.left, parent, context, scope)) {
+        if (Query.match(s.right, path, scope)) {
+          let ancestor = path.parent();
+          while (ancestor) {
+            if (Query.match(s.left, ancestor, scope)) {
               return true;
             }
+            ancestor = ancestor.parent();
           }
         }
         return false;
 
       case 'adjacent':
-        if (Query.match(s.right, e, context, scope)) {
-          const parent = context.ancestry[context.ancestry.length - 1];
-          const index = context.path[context.path.length - 1];
-          const attr = context.path[context.path.length - 2];
-          if (parent && typeof index === 'number' && attr === 'children' && 'children' in parent) {
-            const child = parent[attr][index - 1];
-            const path = context.path.slice(0, -1).concat([index - 1]);
-            if (child) {
-              return Query.match(s.left, child, { ...context, path }, scope);
-            }
+        if (Query.match(s.right, path, scope)) {
+          const sibling = path.prevSibling();
+          if (sibling) {
+            return Query.match(s.left, sibling, scope);
           }
         }
         return false;
 
       case 'sibling':
-        if (Query.match(s.right, e, context, scope)) {
-          const parent = context.ancestry[context.ancestry.length - 1];
-          const index = context.path[context.path.length - 1];
-          const attr = context.path[context.path.length - 2];
-          if (parent && typeof index === 'number' && attr === 'children' && 'children' in parent) {
-            for (let i = index - 1; i >= 0; i--) {
-              const child = parent[attr][i];
-              const path = context.path.slice(0, -1).concat([i]);
-              if (Query.match(s.left, child, { ...context, path }, scope)) {
-                return true;
-              }
+        if (Query.match(s.right, path, scope)) {
+          let sibling = path.prevSibling();
+          while (sibling) {
+            if (Query.match(s.left, sibling, scope)) {
+              return true;
             }
+            sibling = sibling.prevSibling();
           }
         }
         return false;
 
       case 'attribute': {
-        let value: any = e; // eslint-disable-line @typescript-eslint/no-explicit-any
+        let value: any = path.node; // eslint-disable-line @typescript-eslint/no-explicit-any
         for (const attr of s.path) {
           value = value?.[attr];
         }
@@ -296,8 +287,8 @@ export class Query {
       }
 
       case 'nth-child': {
-        const index = context.path[context.path.length - 1];
-        if (typeof index !== 'number') {
+        const index = path.childIndex;
+        if (index === null) {
           return false;
         }
         switch (s.index.type) {
@@ -311,18 +302,12 @@ export class Query {
       }
 
       case 'nth-last-child': {
-        const parent = context.ancestry[context.ancestry.length - 1];
-        const index = context.path[context.path.length - 1];
-        const attr = context.path[context.path.length - 2];
-        if (
-          !parent ||
-          typeof index !== 'number' ||
-          attr !== 'children' ||
-          !('children' in parent)
-        ) {
+        const children = path.parent()?.children();
+        const index = path.childIndex;
+        if (index === null || !children) {
           return false;
         }
-        const lastIndex = parent.children.length - index;
+        const lastIndex = children.length - index;
         switch (s.index.type) {
           case 'literal':
             return lastIndex === s.index.value;
@@ -334,54 +319,36 @@ export class Query {
       }
 
       case 'scope':
-        return e === scope;
+        return path === scope;
 
       case 'class':
         switch (s.name) {
           case 'assertion':
             return (
-              e.type === 'LookAhead' ||
-              e.type === 'LookBehind' ||
-              e.type === 'WordBoundary' ||
-              e.type === 'LineBegin' ||
-              e.type === 'LineEnd'
+              path.is('LookAhead') ||
+              path.is('LookBehind') ||
+              path.is('WordBoundary') ||
+              path.is('LineBegin') ||
+              path.is('LineEnd')
             );
           case 'back-ref':
-            return e.type === 'BackRef' || e.type === 'NamedBackRef';
+            return path.is('BackRef') || path.is('NamedBackRef');
           case 'capture':
-            return e.type === 'Capture' || e.type === 'NamedCapture';
+            return path.is('Capture') || path.is('NamedCapture');
           case 'char': {
-            if (context.ancestry[context.ancestry.length - 1]?.type === 'Class') {
+            if (path.parent()?.is('Class') || path.parent()?.is('ClassRange')) {
               return false;
             }
-            return (
-              e.type === 'Char' ||
-              e.type === 'Dot' ||
-              e.type === 'Class' ||
-              e.type === 'EscapeClass'
-            );
+            return path.is('Char') || path.is('Dot') || path.is('Class') || path.is('EscapeClass');
           }
           case 'group':
-            return e.type === 'Group' || e.type === 'Capture' || e.type === 'NamedCapture';
+            return path.is('Group') || path.is('Capture') || path.is('NamedCapture');
           case 'look-around':
-            return e.type === 'LookAhead' || e.type === 'LookBehind';
+            return path.is('LookAhead') || path.is('LookBehind');
           case 'repeat':
-            return (
-              e.type === 'Many' || e.type === 'Some' || e.type === 'Optional' || e.type === 'Repeat'
-            );
+            return path.is('Many') || path.is('Some') || path.is('Optional') || path.is('Repeat');
         }
     }
-  }
-
-  /** Get a parent context. */
-  private static upwardContext(context: RecurseContext): RecurseContext {
-    const ancestry = context.ancestry.slice(0, -1);
-    const path = context.path.concat();
-    if (typeof path[path.length - 1] === 'number') {
-      path.pop();
-    }
-    path.pop();
-    return { ancestry, path };
   }
 
   public selector: Selector;
@@ -399,12 +366,13 @@ export class Query {
   }
 
   /**
-   * Try to match this selector against the given element on the context and scope.
-   *
-   * It is designed for calling inside `recurse` handler.
+   * Try to match this selector against the given node.
    */
-  public match(e: Element, context: RecurseContext, scope: Element): boolean {
-    return Query.match(this.selector, e, context, scope);
+  public match(
+    path: NodePath<Pattern | Node | ClassItem>,
+    scope: NodePath<Pattern | Node | ClassItem>
+  ): boolean {
+    return Query.match(this.selector, path, scope);
   }
 }
 
@@ -461,8 +429,11 @@ export class QuerySet {
   }
 
   /** Return a generator of matched queries. */
-  public *match(e: Element, context: RecurseContext, scope: Element): Generator<Query> {
-    const typeQueries = this.typeQueriesMap.get(e.type) ?? [];
+  public *match(
+    path: NodePath<Pattern | Node | ClassItem>,
+    scope: NodePath<Pattern | Node | ClassItem>
+  ): Generator<Query> {
+    const typeQueries = this.typeQueriesMap.get(path.node.type) ?? [];
     const universalQueries = this.universalQueries;
 
     let i = typeQueries.length - 1;
@@ -472,7 +443,7 @@ export class QuerySet {
         i < 0 || (j >= 0 && QuerySet.compare(typeQueries[i], universalQueries[j]) < 0)
           ? universalQueries[j--]
           : typeQueries[i--];
-      if (q.query.match(e, context, scope)) {
+      if (q.query.match(path, scope)) {
         yield q.query;
       }
     }
