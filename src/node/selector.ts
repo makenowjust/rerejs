@@ -11,7 +11,7 @@ export type Selector =
   // `:not` selector (e.g. `:not(Char)`)
   | { type: 'not'; selectors: Selector[] }
   // `:has` selector (e.g. `:has(> Char)`)
-  | { type: 'has'; selectors: Selector[] }
+  | { type: 'has'; selectors: RelativeSelector[] }
   // child `>` selector (e.g. `Class >  Char`)
   | { type: 'child'; left: Selector; right: Selector }
   // descendant ` ` selector (e.g. `Class Char`)
@@ -24,8 +24,8 @@ export type Selector =
   | {
       type: 'attribute';
       path: string[];
-      operator: SelectorAttributeOperator;
-      value: SelectorAttributeValue;
+      operator: AttributeSelectorOperator;
+      value: AttributeSelectorValue;
     }
   // `[path]` attribute existence selector (e.g. `[flagSet.unicode]`)
   | {
@@ -34,25 +34,33 @@ export type Selector =
       operator: 'exist';
     }
   // `:nth-child` selector (e.g. `:nth-child(2n+1)`)
-  | { type: 'nth-child'; index: SelectorNthChildIndex }
+  | { type: 'nth-child'; index: NthChildSelectorIndex }
   // `:nth-last-child` selector (e.g. `:nth-last-child(2n+1)`)
-  | { type: 'nth-last-child'; index: SelectorNthChildIndex }
+  | { type: 'nth-last-child'; index: NthChildSelectorIndex }
   // `:scope` selector
   | { type: 'scope' }
   // `:pseudo-class` selector (e.g. `:char`)
-  | { type: 'class'; name: SelectorClassName };
+  | { type: 'class'; name: ClassSelectorName };
+
+/** Type for selector of `:has(...)` selector argument. */
+export type RelativeSelector = {
+  op: 'descendant' | 'child' | 'sibling' | 'adjacent';
+  // Note that this selector is absolutized,
+  // it means `:scope` and the operator is prepended.
+  selector: Selector;
+};
 
 /** Type for attribute selector operators. */
-export type SelectorAttributeOperator = '=' | '!=' | '<=' | '>=' | '<' | '>';
+export type AttributeSelectorOperator = '=' | '!=' | '<=' | '>=' | '<' | '>';
 
 /** Type for attribute selector values.  */
-export type SelectorAttributeValue =
+export type AttributeSelectorValue =
   | { type: 'regexp'; value: RegExp }
   | { type: 'literal'; value: string | number | boolean | null }
   | { type: 'type'; value: string };
 
 /** Type for `:nth-child` and `:nth-last-child` index specifier. */
-export type SelectorNthChildIndex =
+export type NthChildSelectorIndex =
   | { type: 'literal'; value: number }
   | { type: 'step'; by: number; initial: number };
 
@@ -67,7 +75,7 @@ export type SelectorNthChildIndex =
  * - `:look-around` matches `LookAhead` and `LookBehind`.
  * - `:repeat` matches `Many`, `Some`, `Optional` and `Repeat`.
  */
-export type SelectorClassName =
+export type ClassSelectorName =
   | 'assertion'
   | 'back-ref'
   | 'capture'
@@ -236,8 +244,8 @@ export class SelectorParser {
       const path = this.parsePath();
 
       this.skipWhitespace();
-      let operator: SelectorAttributeOperator | null = null;
-      let value: SelectorAttributeValue | null = null;
+      let operator: AttributeSelectorOperator | null = null;
+      let value: AttributeSelectorValue | null = null;
       const op2 = this.source.substr(this.pos, 2);
       switch (op2) {
         case '!=':
@@ -324,7 +332,7 @@ export class SelectorParser {
   }
 
   /** Parse comma separated relative selector list. */
-  private parseRelativeSelectors(): Selector[] {
+  private parseRelativeSelectors(): RelativeSelector[] {
     const selectors = [this.parseRelativeSelector()];
 
     this.skipWhitespace();
@@ -348,7 +356,7 @@ export class SelectorParser {
    *
    * See https://drafts.csswg.org/selectors-4/#absolutizing.
    */
-  private parseRelativeSelector(): Selector {
+  private parseRelativeSelector(): RelativeSelector {
     const type = this.parseBinaryOp() ?? 'descendant';
     this.skipWhitespace();
     const selector = this.parseSelector();
@@ -363,7 +371,7 @@ export class SelectorParser {
       }
       return { type, left: { type: 'scope' }, right: s };
     };
-    return fix(selector);
+    return { op: type, selector: fix(selector) };
   }
 
   /** Parse `:nth-child` or `:nth-last-child` pseudo class selector. */
@@ -382,7 +390,7 @@ export class SelectorParser {
       value = this.parseInt();
     }
 
-    let index: SelectorNthChildIndex;
+    let index: NthChildSelectorIndex;
     if (this.source[this.pos] === 'n') {
       this.pos++; // skip 'n'
       let initial = 0;
@@ -435,7 +443,7 @@ export class SelectorParser {
    * When `eq` is `true`, some special syntaxes is allowed.
    * (regexp, boolean, `null` literals, and `type(...)`)
    */
-  private parseAttributeValue(eq: boolean): SelectorAttributeValue {
+  private parseAttributeValue(eq: boolean): AttributeSelectorValue {
     this.skipWhitespace();
 
     if (eq) {

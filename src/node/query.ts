@@ -1,6 +1,7 @@
 import { ClassItem, Pattern, Node } from '../syntax/pattern';
-import { NodePath } from './recurse/path';
+import { RecurseHandler } from './recurse';
 import { Selector, SelectorParser } from './selector';
+import { RENode, RENodeTypeName } from './types';
 
 /**
  * A selector specificity like CSS selector.
@@ -37,8 +38,10 @@ export class Specificity {
 
       case 'is':
       case 'not':
-      case 'has':
         return Specificity.max(...s.selectors.map(Specificity.calculate));
+
+      case 'has':
+        return Specificity.max(...s.selectors.map((s) => Specificity.calculate(s.selector)));
 
       case 'type':
         return new Specificity(0, 1);
@@ -137,15 +140,15 @@ export class Query {
   /** An implementation of `Query#match`. */
   private static match(
     s: Selector,
-    path: NodePath<Pattern | Node | ClassItem>,
-    scope: NodePath<Pattern | Node | ClassItem>
+    path: RENode<Pattern | Node | ClassItem>,
+    scope: RENode<Pattern | Node | ClassItem>
   ): boolean {
     switch (s.type) {
       case 'universal':
         return true;
 
       case 'type':
-        return path.node.type === s.value;
+        return path.is(s.value as RENodeTypeName);
 
       case 'is':
         for (const selector of s.selectors) {
@@ -172,28 +175,33 @@ export class Query {
         return true;
 
       case 'has': {
-        for (const selector of s.selectors) {
-          // To match sibling and adjacent selector correctly, try to match from the parent.
-          // It is too inefficient -_-
-          const parent = path.parent() ?? path;
-          let matched = false;
-          let skip = true;
-          parent.recurse({
-            enter(child) {
-              // Skip nodes to reach the current node.
-              if (skip) {
-                skip = child !== path;
-                if (skip && child !== parent) {
-                  child.skip();
-                }
-                return;
+        let matched = false;
+        const handler = (s: Selector): RecurseHandler => ({
+          enter(child, signal): void {
+            if (Query.match(s, child, path)) {
+              matched = true;
+              signal.break();
+            }
+          },
+        });
+        for (const rel of s.selectors) {
+          switch (rel.op) {
+            case 'descendant':
+            case 'child':
+              path.recurse(handler(rel.selector));
+              break;
+            case 'adjacent':
+              path.nextSibling()?.recurse(handler(rel.selector));
+              break;
+            case 'sibling': {
+              let sibling = path.nextSibling();
+              while (sibling && !matched) {
+                sibling.recurse(handler(rel.selector));
+                sibling = sibling.nextSibling();
               }
-              if (Query.match(selector, child, path)) {
-                matched = true;
-                child.break();
-              }
-            },
-          });
+              break;
+            }
+          }
           if (matched) {
             return true;
           }
@@ -244,10 +252,8 @@ export class Query {
         return false;
 
       case 'attribute': {
-        let value: any = path.node; // eslint-disable-line @typescript-eslint/no-explicit-any
-        for (const attr of s.path) {
-          value = value?.[attr];
-        }
+        let value: any = path.attribute(...s.path); // eslint-disable-line @typescript-eslint/no-explicit-any
+        // Fix value if expected type is `string`.
         if (s.operator !== 'exist' && typeof value === 'number') {
           if (
             s.value.type === 'regexp' ||
@@ -287,7 +293,7 @@ export class Query {
       }
 
       case 'nth-child': {
-        const index = path.childIndex;
+        const index = path.childIndex();
         if (index === null) {
           return false;
         }
@@ -303,7 +309,7 @@ export class Query {
 
       case 'nth-last-child': {
         const children = path.parent()?.children();
-        const index = path.childIndex;
+        const index = path.childIndex();
         if (index === null || !children) {
           return false;
         }
@@ -369,8 +375,8 @@ export class Query {
    * Try to match this selector against the given node.
    */
   public match(
-    path: NodePath<Pattern | Node | ClassItem>,
-    scope: NodePath<Pattern | Node | ClassItem>
+    path: RENode<Pattern | Node | ClassItem>,
+    scope: RENode<Pattern | Node | ClassItem> = path
   ): boolean {
     return Query.match(this.selector, path, scope);
   }
@@ -430,10 +436,10 @@ export class QuerySet {
 
   /** Return a generator of matched queries. */
   public *match(
-    path: NodePath<Pattern | Node | ClassItem>,
-    scope: NodePath<Pattern | Node | ClassItem>
+    path: RENode<Pattern | Node | ClassItem>,
+    scope: RENode<Pattern | Node | ClassItem> = path
   ): Generator<Query> {
-    const typeQueries = this.typeQueriesMap.get(path.node.type) ?? [];
+    const typeQueries = this.typeQueriesMap.get(path.node().type) ?? [];
     const universalQueries = this.universalQueries;
 
     let i = typeQueries.length - 1;
