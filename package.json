@@ -41,7 +41,7 @@
     "nyc": "15.0.1",
     "prettier": "2.0.5",
     "rollup": "2.10.2",
-    "rollup-plugin-dts": "1.4.3",
+    "rollup-plugin-dts": "1.4.4",
     "source-map-support": "0.5.19",
     "sucrase": "3.14.0",
     "typescript": "3.9.2",
