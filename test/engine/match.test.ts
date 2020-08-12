@@ -1,5 +1,3 @@
-import util from 'util';
-
 import test from 'ava';
 
 import { Match } from '../../src/engine/match';
@@ -45,16 +43,4 @@ test('toArray', (t) => {
 test('toString', (t) => {
   const m = new Match('test', [0, 4, -1, -1, 1, 3], new Map([['x', 2]]));
   t.is(m.toString(), 'Match["test", undefined, "es"]');
-});
-
-test('util.inspect.custom', (t) => {
-  const m = new Match('test', [0, 4, -1, -1, 1, 3], new Map([['x', 2]]));
-  let s = '';
-  s += 'Match [\n';
-  s += "  0 [0:4] => 'test',\n";
-  s += '  1 => undefined,\n';
-  s += "  'x' [1:3] => 'es',\n";
-  s += ']';
-
-  t.is(util.inspect(m, { colors: false }), s);
 });

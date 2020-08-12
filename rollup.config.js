@@ -15,7 +15,6 @@ const main = {
       format: 'esm',
     },
   ],
-  external: ['util'],
   plugins: [
     sucrase({
       exclude: ['node_modules/**'],
@@ -34,7 +33,6 @@ const types = {
       format: 'esm',
     },
   ],
-  external: ['util'],
   plugins: [dts()],
 };
 

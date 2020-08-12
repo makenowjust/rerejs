@@ -1,4 +1,4 @@
-import util from 'util';
+
 
 import { escape } from './escape';
 
@@ -112,12 +112,6 @@ export class CharSet {
 
   public toString(): string {
     return `CharSet${this.toRegExpPattern()}`;
-  }
-
-  private [util.inspect.custom](_depth: number, options: util.InspectOptionsStylized): string {
-    let s = `${options.stylize('CharSet', 'special')} `;
-    s += options.stylize(this.toRegExpPattern(), 'regexp');
-    return s;
   }
 
   /** Find the least `i` such that satisfy `c <= this.data[i * 2 + 1]`. */

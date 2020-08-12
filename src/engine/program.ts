@@ -1,5 +1,3 @@
-import util from 'util';
-
 import { word, unicodeWord } from '../char-class/ascii';
 import { Pattern, patternToString } from '../syntax/pattern';
 import { canonicalize, uncanonicalize } from './canonicalize';
@@ -162,21 +160,6 @@ export class Program {
     const codes = codesToString(this.codes).split('\n').join('\n    ');
     s += 'Program {\n';
     s += `  pattern: ${patternToString(this.pattern)},\n`;
-    s += '  codes:\n';
-    s += `    ${codes}\n`;
-    s += '}';
-    return s;
-  }
-
-  public [util.inspect.custom](depth: number, options: util.InspectOptionsStylized): string {
-    let s = ``;
-    const pattern = options.stylize(patternToString(this.pattern), 'regexp');
-    const codes = codesToString(this.codes)
-      .split('\n')
-      .map((line) => options.stylize(line, 'string'))
-      .join('\n    ');
-    s += `${options.stylize('Program', 'special')} {\n`;
-    s += `  pattern: ${pattern},\n`;
     s += '  codes:\n';
     s += `    ${codes}\n`;
     s += '}';

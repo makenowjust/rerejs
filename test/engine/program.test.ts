@@ -1,5 +1,3 @@
-import util from 'util';
-
 import test from 'ava';
 
 import { Compiler } from '../../src/engine/compiler';
@@ -468,32 +466,4 @@ test('toString', (t) => {
   expected += '}';
 
   t.is(program.toString(), expected);
-});
-
-test('util.inspect.custom', (t) => {
-  const program = compile('^(?:(a)|([b-z]))*\\1$', '');
-  let expected = '';
-  expected += 'Program {\n';
-  expected += '  pattern: /^(?:(a)|([b-z]))*\\1$/,\n';
-  expected += '  codes:\n';
-  expected += '    #000: cap_begin    0\n';
-  expected += '    #001: line_begin   \n';
-  expected += '    #002: fork_cont    #013\n';
-  expected += '    #003: cap_reset    1 3\n';
-  expected += '    #004: fork_cont    #009\n';
-  expected += '    #005: cap_begin    1\n';
-  expected += "    #006: char         'a'\n";
-  expected += '    #007: cap_end      1\n';
-  expected += '    #008: jump         #012\n';
-  expected += '    #009: cap_begin    2\n';
-  expected += '    #010: class        [b-z]\n';
-  expected += '    #011: cap_end      2\n';
-  expected += '    #012: jump         #002\n';
-  expected += '    #013: ref          1\n';
-  expected += '    #014: line_end     \n';
-  expected += '    #015: cap_end      0\n';
-  expected += '    #016: match        \n';
-  expected += '}';
-
-  t.is(util.inspect(program, { colors: false }), expected);
 });

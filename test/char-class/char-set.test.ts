@@ -1,5 +1,3 @@
-import util from 'util';
-
 import test from 'ava';
 
 import { CharSet } from '../../src/char-class/char-set';
@@ -103,11 +101,4 @@ test('toString', (t) => {
   set.add(0x61, 0x7a + 1); // a-z
 
   t.is(set.toString(), 'CharSet[a-z]');
-});
-
-test('util.inspect.custom', (t) => {
-  const set = new CharSet();
-  set.add(0x61, 0x7a + 1); // a-z
-
-  t.is(util.inspect(set, { colors: false }), 'CharSet [a-z]');
 });
