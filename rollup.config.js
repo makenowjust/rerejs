@@ -1,3 +1,4 @@
+import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import sucrase from '@rollup/plugin-sucrase';
@@ -26,6 +27,28 @@ const main = {
   ],
 };
 
+const browser = {
+  input: 'index.ts',
+  output: [
+    {
+      file: 'lib/index.browser.js',
+      name: 'ReRE',
+      format: 'umd',
+    },
+  ],
+  plugins: [
+    sucrase({
+      exclude: ['node_modules/**'],
+      transforms: ['typescript'],
+    }),
+    commonjs(),
+    alias({
+      entries: [{ find: 'util', replacement: __dirname + '/tools/node-util-dummy.ts' }],
+    }),
+    resolve(),
+  ],
+};
+
 const types = {
   input: 'out/index.d.ts',
   output: [
@@ -38,4 +61,4 @@ const types = {
   plugins: [dts()],
 };
 
-export default [main, types];
+export default [main, browser, types];
