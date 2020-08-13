@@ -15,14 +15,13 @@ const main = {
       format: 'esm',
     },
   ],
-  external: ['util'],
   plugins: [
     sucrase({
       exclude: ['node_modules/**'],
       transforms: ['typescript'],
     }),
     commonjs(),
-    resolve({ preferBuiltins: true }),
+    resolve(),
   ],
 };
 
@@ -34,7 +33,6 @@ const types = {
       format: 'esm',
     },
   ],
-  external: ['util'],
   plugins: [dts()],
 };
 
