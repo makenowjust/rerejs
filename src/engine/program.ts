@@ -168,7 +168,10 @@ export class Program {
     return s;
   }
 
-  public [util.inspect.custom](depth: number, options: util.InspectOptionsStylized): string {
+  public [Symbol.for('nodejs.util.inspect.custom')](
+    depth: number,
+    options: util.InspectOptionsStylized
+  ): string {
     let s = ``;
     const pattern = options.stylize(patternToString(this.pattern), 'regexp');
     const codes = codesToString(this.codes)

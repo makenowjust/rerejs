@@ -104,15 +104,17 @@ export class Match {
     return `Match[${array.map(show).join(', ')}]`;
   }
 
-  public [util.inspect.custom](depth: number, options: util.InspectOptionsStylized): string {
+  public [Symbol.for('nodejs.util.inspect.custom')](
+    depth: number,
+    options: util.InspectOptionsStylized
+  ): string {
     let s = `${options.stylize('Match', 'special')} [\n`;
     const inverseNames = new Map(Array.from(this.names).map(([k, i]) => [i, k]));
-    const newOptions = {
-      ...options,
-      depth: options.depth == null ? null : options.depth - 1,
-    };
     for (let i = 0; i < this.length; i++) {
-      const name = util.inspect(inverseNames.get(i) ?? i, newOptions);
+      const name = options.stylize(
+        JSON.stringify(inverseNames.get(i) ?? i),
+        inverseNames.has(i) ? 'string' : 'number'
+      );
       let capture = this.get(i);
       if (capture === undefined) {
         s += `  ${name} => ${options.stylize('undefined', 'undefined')},\n`;
@@ -120,9 +122,8 @@ export class Match {
       }
       const begin = options.stylize(this.caps[i * 2].toString(), 'number');
       const end = options.stylize(this.caps[i * 2 + 1].toString(), 'number');
-      capture = util.inspect(capture, newOptions);
-      s += `  ${name} [${begin}:${end}] =>`;
-      s += ` ${capture.split('\n').join('\n  ')},\n`;
+      capture = options.stylize(JSON.stringify(capture), 'string');
+      s += `  ${name} [${begin}:${end}] => ${capture},\n`;
     }
     s += ']';
     return s;

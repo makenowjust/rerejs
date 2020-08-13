@@ -114,7 +114,10 @@ export class CharSet {
     return `CharSet${this.toRegExpPattern()}`;
   }
 
-  private [util.inspect.custom](_depth: number, options: util.InspectOptionsStylized): string {
+  private [Symbol.for('nodejs.util.inspect.custom')](
+    _depth: number,
+    options: util.InspectOptionsStylized
+  ): string {
     let s = `${options.stylize('CharSet', 'special')} `;
     s += options.stylize(this.toRegExpPattern(), 'regexp');
     return s;

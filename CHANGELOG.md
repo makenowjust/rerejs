@@ -10,6 +10,7 @@ Changes:
   - Bundle `mjs` file.
   - Fix up an internal directory structure.
   - Allow to call `CharSet#add` for adding one value.
+  - Remove `util` module dependency. ([#182](https://github.com/MakeNowJust/rerejs/issues/182))
 
 # v0.1.4 (2020-03-23)
 

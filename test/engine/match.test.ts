@@ -51,9 +51,9 @@ test('util.inspect.custom', (t) => {
   const m = new Match('test', [0, 4, -1, -1, 1, 3], new Map([['x', 2]]));
   let s = '';
   s += 'Match [\n';
-  s += "  0 [0:4] => 'test',\n";
+  s += '  0 [0:4] => "test",\n';
   s += '  1 => undefined,\n';
-  s += "  'x' [1:3] => 'es',\n";
+  s += '  "x" [1:3] => "es",\n';
   s += ']';
 
   t.is(util.inspect(m, { colors: false }), s);
