@@ -43,7 +43,7 @@
     "rollup": "2.57.0",
     "rollup-plugin-dts": "4.0.0",
     "source-map-support": "0.5.19",
-    "sucrase": "3.20.1",
+    "sucrase": "3.20.3",
     "typescript": "4.2.4",
     "unicode-12.0.0": "0.8.0",
     "unicode-match-property-value-ecmascript": "1.1.0",
