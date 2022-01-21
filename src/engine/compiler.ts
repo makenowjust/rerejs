@@ -260,10 +260,10 @@ export class Compiler {
       } else {
         codes.push(
           { op: 'push', value: remain + 1 },
-          { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes0.length + 4 },
+          { op: node.nonGreedy ? 'fork_next' : 'fork_cont', next: codes1.length + 4 },
           ...codes1,
           { op: 'dec' },
-          { op: 'loop', cont: -1 - codes0.length - 2 },
+          { op: 'loop', cont: -1 - codes1.length - 2 },
           { op: 'fail' },
           { op: 'pop' }
         );
