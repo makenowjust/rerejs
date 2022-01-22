@@ -47,7 +47,7 @@
     "typescript": "4.2.4",
     "unicode-12.0.0": "0.8.0",
     "unicode-match-property-value-ecmascript": "1.1.0",
-    "unicode-property-aliases-ecmascript": "1.0.5",
+    "unicode-property-aliases-ecmascript": "1.1.0",
     "unicode-property-value-aliases-ecmascript": "1.0.4"
   },
   "ava": {
