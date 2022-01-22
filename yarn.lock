@@ -3686,10 +3686,10 @@ unicode-property-aliases-ecmascript@1.1.0:
   resolved "https://registry.yarnpkg.com/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-1.1.0.tgz#dd57a99f6207bedff4628abefb94c50db941c8f4"
   integrity sha512-PqSoPh/pWetQ2phoj5RLiaqIk4kCNwoV3CI+LfGmWLKI3rE3kl1h59XpX2BjgDrmbxD9ARtQobPGU1SguCYuQg==
 
-unicode-property-value-aliases-ecmascript@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/unicode-property-value-aliases-ecmascript/-/unicode-property-value-aliases-ecmascript-1.0.4.tgz#e8430f11c803bc829f91b4a4e3d3705a4b5b38bb"
-  integrity sha512-nPmLU2EbabaLJ2LIAIkd8xvCMOFVnVSdR9yUmGJQI2nRvfaJxEKbpRO+JKDxRGdy8UVFyagCbW3XrGL/LZq3pA==
+unicode-property-value-aliases-ecmascript@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/unicode-property-value-aliases-ecmascript/-/unicode-property-value-aliases-ecmascript-1.1.0.tgz#81741305d1f1c28cfd68d135ca03b76db24a75ef"
+  integrity sha512-PvLepU/a53COHb5a0IySDunW7Ew5zALHo60zoZDILIqPbuOoscLO2ZGA6YGjEs6RxNWK2yjvR7pNFBj2Pm9OAQ==
 
 unique-string@^2.0.0:
   version "2.0.0"
