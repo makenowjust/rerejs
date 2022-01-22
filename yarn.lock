@@ -3676,10 +3676,10 @@ unicode-12.0.0@0.8.0:
   resolved "https://registry.yarnpkg.com/unicode-12.0.0/-/unicode-12.0.0-0.8.0.tgz#4150d71d2d62ddf3bcc4fcb6b01e2d852cf9bb1f"
   integrity sha512-R4Ujg8RH29Tdilqlku3r4/D4CiTZldxlesA+2UBRa5gxEUAFba6o97QmFoMLPzHpPNRupaYq1HzU9LB0CPu2+A==
 
-unicode-match-property-value-ecmascript@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/unicode-match-property-value-ecmascript/-/unicode-match-property-value-ecmascript-1.1.0.tgz#5b4b426e08d13a80365e0d657ac7a6c1ec46a277"
-  integrity sha512-hDTHvaBk3RmFzvSl0UVrUmC3PuW9wKVnpoUDYH0JDkSIovzw+J5viQmeYHxVSBptubnr7PbH2e0fnpDRQnQl5g==
+unicode-match-property-value-ecmascript@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/unicode-match-property-value-ecmascript/-/unicode-match-property-value-ecmascript-1.2.0.tgz#0d91f600eeeb3096aa962b1d6fc88876e64ea531"
+  integrity sha512-wjuQHGQVofmSJv1uVISKLE5zO2rNGzM/KCYZch/QQvez7C1hUhBIuZ701fYXExuufJFMPhv2SyL8CyoIfMLbIQ==
 
 unicode-property-aliases-ecmascript@1.1.0:
   version "1.1.0"
