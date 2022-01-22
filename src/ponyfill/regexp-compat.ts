@@ -66,7 +66,7 @@ export const RegExpCompat = ((): typeof RegExp => {
     });
   }
 
-  klass[Symbol.species] = klass;
+  (klass as any)[Symbol.species] = klass;
 
   Object.defineProperty(klass.prototype, 'source', {
     get(this: RegExpCompat): string {
