@@ -1,3 +1,10 @@
+# v0.2.1 (2022-01-22)
+
+Fixes:
+
+  - [#520](https://github.com/MakeNowJust/rerejs/pull/520) Fixed wrong index for capture group in RegExpExecArray. ([@itozyun](https://github.com/itozyun))
+  - [#521](https://github.com/MakeNowJust/rerejs/pull/521) Fixed a compilation error in Repeat pattern. ([@itozyun](https://github.com/itozyun))
+
 # v0.2.0 (2020-08-13)
 
 Changes:
