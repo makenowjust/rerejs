@@ -3195,10 +3195,10 @@ rollup-plugin-dts@4.0.1:
   optionalDependencies:
     "@babel/code-frame" "^7.14.5"
 
-rollup@2.60.1:
-  version "2.60.1"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.60.1.tgz#4b34cd247f09b421f10a3c9286eda2ecf9972079"
-  integrity sha512-akwfnpjY0rXEDSn1UTVfKXJhPsEBu+imi1gqBA1ZkHGydUnkV/fWCC90P7rDaLEW8KTwBcS1G3N4893Ndz+jwg==
+rollup@2.66.0:
+  version "2.66.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.66.0.tgz#ee529ea15a20485d579039637fec3050bad03bbb"
+  integrity sha512-L6mKOkdyP8HK5kKJXaiWG7KZDumPJjuo1P+cfyHOJPNNTK3Moe7zCH5+fy7v8pVmHXtlxorzaBjvkBMB23s98g==
   optionalDependencies:
     fsevents "~2.3.2"
 
