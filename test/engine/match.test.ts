@@ -39,7 +39,7 @@ test('toArray', (t) => {
   groups['x'] = 'es';
   b.groups = groups;
 
-  t.deepEqual(a, b);
+  t.deepEqual(a, b as RegExpExecArray);
 });
 
 test('toString', (t) => {
