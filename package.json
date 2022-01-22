@@ -131,6 +131,7 @@
   "renovate": {
     "extends": [
       "config:base"
-    ]
+    ],
+    "automerge": true
   }
 }
