@@ -66,7 +66,7 @@ export const RegExpCompat = ((): typeof RegExp => {
     });
   }
 
-  klass[Symbol.species] = klass;
+  (klass as any)[Symbol.species] = klass;
 
   Object.defineProperty(klass.prototype, 'source', {
     get(this: RegExpCompat): string {
@@ -130,7 +130,7 @@ export const RegExpCompat = ((): typeof RegExp => {
     if (this.global) {
       this.lastIndex = 0;
       const result: string[] = [];
-      for (;;) {
+      for (; ;) {
         const r = this.exec(string);
         if (r) {
           result.push(r[0]);
@@ -159,7 +159,7 @@ export const RegExpCompat = ((): typeof RegExp => {
     // Collect matches to replace.
     // It must be done before building result string because
     // the replacer function calls `this.exec` and changes `this.lastIndex` maybe.
-    for (;;) {
+    for (; ;) {
       const match = this.exec(string);
       if (!match) {
         break;
@@ -187,7 +187,7 @@ export const RegExpCompat = ((): typeof RegExp => {
         result += String(replacer(...args));
       } else {
         let i = 0;
-        for (;;) {
+        for (; ;) {
           const j = replacer.indexOf('$', i);
           result += replacer.slice(i, j === -1 ? string.length : j);
           if (j === -1) {
