@@ -13,6 +13,4 @@ jobs:
     - run: yarn lint
     - run: yarn type-check
     - run: yarn ci
-    - run: yarn codecov
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - uses: codecov/codecov-action@v2
