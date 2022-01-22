@@ -15,7 +15,8 @@ test('legacy methods', (t) => {
   t.throws(() => RegExpCompat.lastMatch);
 
   const re = new RegExpCompat('');
-  t.is(re.compile(), re);
+  t.is(re.compile(''), re);
+  t.is(re.compile('', ''), re);
 });
 
 test('constructor', (t) => {
