@@ -88,6 +88,12 @@ const testCases: TestCase[] = [
     unmatches: [],
   },
   {
+    source: 'a{0,2}',
+    flags: '',
+    matches: ['', 'a', 'aa'],
+    unmatches: [],
+  },
+  {
     source: 'a{1,}',
     flags: '',
     matches: ['a', 'aa'],
