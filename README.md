@@ -149,6 +149,6 @@ There are few documents for now. Sorry.
 
 ReRE.js is licensed under MIT license.
 
-(C) 2020 TSUYUSATO "[MakeNowJust][]" Kitsune
+(C) 2020-2022 TSUYUSATO "[MakeNowJust][]" Kitsune
 
 [MakeNowJust]: https://github.com/MakeNowJust
