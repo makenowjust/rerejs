@@ -8,7 +8,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-node@v2
       with:
-        node-version: '13.x'
+        node-version: '17.x'
     - run: yarn install
     - run: yarn lint
     - run: yarn type-check
