@@ -128,6 +128,11 @@ const testCases: TestCase[] = [
     flags: 'y',
     strings: ['a', 'bb', 'bab'],
   },
+  {
+    source: '(a(b))',
+    flags: '',
+    strings: ['abc'],
+  },
 ];
 
 for (const testCase of testCases) {

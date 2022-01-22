@@ -991,8 +991,8 @@ export class Parser {
 
     if (!this.source.startsWith('(?', this.pos)) {
       this.pos++; // skip '('
-      const child = this.parseDisjunction();
       const index = ++this.captureParensIndex;
+      const child = this.parseDisjunction();
       if (this.current() !== ')') {
         throw new RegExpSyntaxError('unterminated capture');
       }

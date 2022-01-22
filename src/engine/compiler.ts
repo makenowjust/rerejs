@@ -168,8 +168,9 @@ export class Compiler {
   }
 
   private compileCapture(node: Capture): OpCode[] {
+    const current = this.captureParensIndex++;
     const codes0 = this.compileNode(node.child);
-    if (node.index !== this.captureParensIndex++) {
+    if (node.index !== current) {
       throw new Error('BUG: invalid pattern');
     }
     return [
@@ -180,9 +181,10 @@ export class Compiler {
   }
 
   private compileNamedCapture(node: NamedCapture): OpCode[] {
+    const current = this.captureParensIndex++;
     const codes0 = this.compileNode(node.child);
     const index = this.names.get(node.name);
-    if (index === undefined || index !== this.captureParensIndex++) {
+    if (index === undefined || index !== current) {
       throw new Error('BUG: invalid pattern');
     }
     return [{ op: 'cap_begin', index }, ...codes0, { op: 'cap_end', index }];
