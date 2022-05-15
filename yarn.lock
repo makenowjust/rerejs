@@ -295,10 +295,10 @@
     is-module "^1.0.0"
     resolve "^1.19.0"
 
-"@rollup/plugin-sucrase@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@rollup/plugin-sucrase/-/plugin-sucrase-4.0.3.tgz#b972ba61db0faaba397e09daaffcdbd38c167e2c"
-  integrity sha512-gZrjT985isK+EmHt3Dyr9z4JfO9IGuYkxck96yIyIUU9EKnZtDXUZ6ap5kvIdEnY8kLeiypiUEfK+/QtMIlA2A==
+"@rollup/plugin-sucrase@4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-sucrase/-/plugin-sucrase-4.0.4.tgz#0a3b3d97cdc239ec3399f5a10711f751e9f95d98"
+  integrity sha512-YH4J8yoJb5EVnLhAwWxYAQNh2SJOR+SdZ6XdgoKEv6Kxm33riYkM8MlMaggN87UoISP52qAFyZ5ey56wu6umGg==
   dependencies:
     "@rollup/pluginutils" "^4.1.1"
     sucrase "^3.20.0"
