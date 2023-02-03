@@ -39,7 +39,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "nyc": "15.1.0",
     "prettier": "2.8.3",
-    "rollup": "3.12.1",
+    "rollup": "3.13.0",
     "rollup-plugin-dts": "5.1.1",
     "source-map-support": "0.5.21",
     "sucrase": "3.29.0",
