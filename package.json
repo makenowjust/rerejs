@@ -29,7 +29,7 @@
     "@rollup/plugin-commonjs": "25.0.3",
     "@rollup/plugin-node-resolve": "15.1.0",
     "@rollup/plugin-sucrase": "5.0.1",
-    "@types/node": "18.17.0",
+    "@types/node": "18.17.1",
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
     "ava": "4.2.0",
