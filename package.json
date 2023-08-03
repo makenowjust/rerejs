@@ -34,7 +34,7 @@
     "@typescript-eslint/parser": "5.62.0",
     "ava": "4.2.0",
     "eslint": "8.46.0",
-    "eslint-config-prettier": "8.9.0",
+    "eslint-config-prettier": "8.10.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-prettier": "4.2.1",
     "nyc": "15.1.0",
