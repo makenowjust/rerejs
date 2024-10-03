@@ -35,7 +35,7 @@
     "ava": "4.2.0",
     "eslint": "8.57.1",
     "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-import": "2.31.0",
     "eslint-plugin-prettier": "4.2.1",
     "nyc": "15.1.0",
     "prettier": "2.8.8",
