@@ -33,7 +33,7 @@
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
     "ava": "4.2.0",
-    "eslint": "8.57.1",
+    "eslint": "10.0.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-prettier": "5.5.5",
