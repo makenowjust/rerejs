@@ -387,10 +387,10 @@
     is-module "^1.0.0"
     resolve "^1.22.1"
 
-"@rollup/plugin-sucrase@5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@rollup/plugin-sucrase/-/plugin-sucrase-5.0.2.tgz#f8b8b54ad789a47fa882b968a76cede0194eea6e"
-  integrity sha512-4MhIVH9Dy2Hwose1/x5QMs0XF7yn9jDd/yozHqzdIrMWIolgFpGnrnVhQkqTaK1RALY/fpyrEKmwH/04vr1THA==
+"@rollup/plugin-sucrase@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-sucrase/-/plugin-sucrase-5.1.0.tgz#d06c3a3118cb2392c88bcfa44079822ea0d98fba"
+  integrity sha512-/S4cJnfnjmaH0RqjvZtKOCx8WRnL14f3+tIieL5Ty0YkRpUPW2S/tgHCplWsHEmuZAWYoPJ4KN5eIxWtQw95Qw==
   dependencies:
     "@rollup/pluginutils" "^5.0.1"
     sucrase "^3.27.0"
