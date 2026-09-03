@@ -37,7 +37,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-prettier": "5.5.5",
-    "nyc": "15.1.0",
+    "nyc": "18.0.0",
     "prettier": "2.8.8",
     "rollup": "3.30.0",
     "rollup-plugin-dts": "6.3.0",
